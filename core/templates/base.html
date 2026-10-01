@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriIntelligence Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-light: rgba(0, 255, 136, 0.1);
+            --secondary: #fbbf24;
+            --secondary-light: rgba(251, 191, 36, 0.1);
+            --bg: #0a0c12;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 50px -10px rgba(0, 0, 0, 0.5);
+            --neon-glow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Organic Background Pattern */
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 136, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.05) 0%, transparent 40%),
+                #0a0c12;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 8%;
+            background: rgba(10, 12, 18, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--surface-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-main);
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .glass-card {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--surface-border);
+            border-radius: 28px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(0, 255, 136, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 4rem 8%;
+        }
+
+        .btn-premium {
+            background: var(--primary);
+            color: #000000;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            box-shadow: var(--neon-glow);
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+            background: #20ff96;
+        }
+
+        footer {
+            margin-top: 8rem;
+            padding: 4rem 8% 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid var(--surface-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-col ul li a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--primary);
+            padding-left: 4px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-dim);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-up {
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .badge-primary {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        /* Modern Inputs */
+        input, select {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid var(--surface-border) !important;
+            color: var(--text-main) !important;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1) !important;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <nav class="navbar">
+        <div class="logo">
+            <i data-lucide="leaf"></i> AgriIntelligence
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'dashboard' %}"><i data-lucide="layout-dashboard" style="width: 18px;"></i> Dashboard</a>
+            <a href="{% url 'crops_list' %}"><i data-lucide="book-open" style="width: 18px;"></i> Crop Guide</a>
+            <a href="{% url 'compare_products' %}"><i data-lucide="sliders" style="width: 18px;"></i> Product Insights</a>
+            <a href="{% url 'mandi_rates' %}"><i data-lucide="trending-up" style="width: 18px;"></i> Mandi Prices</a>
+            <a href="{% url 'partners_list' %}"><i data-lucide="building" style="width: 18px;"></i> Agri Networks</a>
+        </div>
+        <button class="btn-premium">
+            <i data-lucide="zap" style="width: 16px;"></i> Live Updates
+        </button>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo" style="margin-bottom: 1.2rem;">
+                    <i data-lucide="leaf"></i> AgriIntelligence
+                </div>
+                <p style="color: var(--text-dim); font-size: 0.95rem; max-width: 320px; line-height: 1.7;">
+                    Democratizing agricultural data through AI-driven insights and real-time market drift monitoring. Premium intelligence for modern farmers.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li><a href="{% url 'crops_list' %}">Crop Guide</a></li>
+                    <li><a href="{% url 'mandi_rates' %}">Real-time Prices</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Data Sources</h4>
+                <ul>
+                    <li><a href="#">ICAR Registry</a></li>
+                    <li><a href="#">TNAU Guidelines</a></li>
+                    <li><a href="#">Agmarknet API</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Farmer Helpdesk</a></li>
+                    <li><a href="#">Technical Docs</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="padding-top: 2rem; border-top: 1px solid var(--surface-border); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 0.85rem; font-weight: 500;">
+            <p>&copy; 2026 AgriIntelligence Project. All rights reserved.</p>
+            <div style="display: flex; gap: 1.5rem;">
+                <a href="#" style="color: inherit; text-decoration: none; transition: color 0.3s;"><i data-lucide="twitter" style="width: 18px;"></i></a>
+                <a href="#" style="color: inherit; text-decoration: none; transition: color 0.3s;"><i data-lucide="linkedin" style="width: 18px;"></i></a>
+                <a href="#" style="color: inherit; text-decoration: none; transition: color 0.3s;"><i data-lucide="github" style="width: 18px;"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

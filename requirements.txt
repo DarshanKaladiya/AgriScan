@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+mysql-connector-python
+django
+python-dotenv
+pandas
+selenium
+webdriver-manager
+lxml
+html5lib
+beautifulsoup4
+feedparser
+requests

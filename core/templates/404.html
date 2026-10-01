@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="animate-up" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center;">
+    <div style="background: rgba(255, 255, 255, 0.03); padding: 3rem; border-radius: 40px; border: 1px solid var(--glass-border);">
+        <i data-lucide="ghost" style="width: 64px; height: 64px; color: var(--primary); margin-bottom: 1.5rem; opacity: 0.5;"></i>
+        <h1 style="font-size: 4rem; margin: 0; letter-spacing: -2px;">404</h1>
+        <h3 style="margin: 0.5rem 0 1.5rem; font-weight: 500; color: var(--text-dim);">The crop intelligence you're looking for has drifted.</h3>
+        
+        <p style="max-width: 400px; margin: 0 auto 2rem; opacity: 0.6; font-size: 0.95rem;">
+            We couldn't find detailed metadata for this record. It might be a regional variety not yet indexed in our technical core.
+        </p>
+        
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="{% url 'crops_list' %}" class="btn-premium">
+                <i data-lucide="book-open" style="width: 16px;"></i> Back to Catalog
+            </a>
+            <a href="{% url 'dashboard' %}" class="btn-premium" style="background: transparent; border: 1px solid var(--glass-border); color: white;">
+                Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

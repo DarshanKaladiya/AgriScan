@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="animate-up">
+    <!-- Super Hero Section -->
+    <div style="margin-bottom: 5rem; text-align: left; padding-top: 4rem; position: relative;">
+        <!-- Glowing background orb -->
+        <div style="position: absolute; top: -100px; left: -100px; width: 400px; height: 400px; background: var(--primary); filter: blur(150px); opacity: 0.1; z-index: -1;"></div>
+        
+        <div style="display: inline-flex; align-items: center; gap: 0.8rem; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.2); padding: 0.7rem 1.4rem; border-radius: 100px; color: var(--primary); font-size: 0.85rem; font-weight: 800; margin-bottom: 2.5rem; letter-spacing: 1px; text-transform: uppercase;">
+            <i data-lucide="sparkles" style="width: 16px;"></i> Next-Gen Agriculture Platform
+        </div>
+        <h1 style="font-size: 5rem; font-weight: 800; letter-spacing: -3px; line-height: 1; margin-bottom: 2rem; color: var(--text-main);">
+            Growing Your <br><span style="color: var(--primary); text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);">Agricultural</span> Future
+        </h1>
+        <p style="color: var(--text-dim); font-size: 1.3rem; max-width: 650px; line-height: 1.8; font-weight: 500;">
+            Your command center for real-time market insights, verified crop intelligence, and data-driven product comparisons. Built for the modern ecosystem.
+        </p>
+    </div>
+
+    <!-- Stats Matrix -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.8rem; margin-bottom: 5rem;">
+        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(0, 255, 136, 0.1);">
+            <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.2); padding: 1.1rem; border-radius: 20px; color: var(--primary);">
+                <i data-lucide="sprout"></i>
+            </div>
+            <div>
+                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.3rem; font-weight: 800; letter-spacing: 1.5px;">ACTIVE CROPS</p>
+                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text-main);">{{ crops_count }}</h2>
+            </div>
+        </div>
+        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(251, 191, 36, 0.1);">
+            <div style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.2); padding: 1.1rem; border-radius: 20px; color: var(--secondary);">
+                <i data-lucide="activity"></i>
+            </div>
+            <div>
+                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.3rem; font-weight: 800; letter-spacing: 1.5px;">MARKET DATA</p>
+                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text-main);">11.2K+</h2>
+            </div>
+        </div>
+        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(129, 140, 248, 0.1);">
+            <div style="background: rgba(129, 140, 248, 0.1); border: 1px solid rgba(129, 140, 248, 0.2); padding: 1.1rem; border-radius: 20px; color: #818cf8;">
+                <i data-lucide="globe"></i>
+            </div>
+            <div>
+                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.3rem; font-weight: 800; letter-spacing: 1.5px;">NETWORKS</p>
+                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text-main);">{{ comp_count }}</h2>
+            </div>
+        </div>
+        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(244, 114, 182, 0.1);">
+            <div style="background: rgba(244, 114, 182, 0.1); border: 1px solid rgba(244, 114, 182, 0.2); padding: 1.1rem; border-radius: 20px; color: #f472b6;">
+                <i data-lucide="verified"></i>
+            </div>
+            <div>
+                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.3rem; font-weight: 800; letter-spacing: 1.5px;">VERIFIED GUIDES</p>
+                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text-main);">48+</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Pulse Section -->
+    <div style="margin-bottom: 5rem;">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+            <div style="background: var(--secondary-light); padding: 0.8rem; border-radius: 15px; color: var(--secondary);">
+                <i data-lucide="zap"></i>
+            </div>
+            <h2 style="font-size: 2rem; font-weight: 800; margin: 0; color: var(--text-main);">Market Pulse</h2>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;">
+            <!-- Top Gainers -->
+            <div class="glass-card" style="padding: 2.5rem; border-top: 4px solid var(--primary);">
+                <h3 style="font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.8rem; color: var(--text-main); font-weight: 700;">
+                    <i data-lucide="trending-up" style="color: var(--primary);"></i> Top Gainers
+                </h3>
+                <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                    {% for item in gainers %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--surface-border);">
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            <div class="crop-animated-img" data-crop="{{ item.crop_name|lower }}" style="width: 36px; height: 36px; min-width: 36px;"></div>
+                            <div>
+                                <div style="font-weight: 700; font-size: 1.05rem;">{{ item.crop_name }}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: 500;">{{ item.category }}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 800; color: #059669; font-size: 1.1rem;">+{{ item.pct_change|stringformat:".2f" }}%</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600;">₹{{ item.current_price }}/q</div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p style="color: var(--text-dim); font-style: italic;">Monitoring market fluctuations...</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Top Losers -->
+            <div class="glass-card" style="padding: 2.5rem; border-top: 4px solid #DC2626;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.8rem; color: var(--text-main); font-weight: 700;">
+                    <i data-lucide="trending-down" style="color: #DC2626;"></i> Top Losers
+                </h3>
+                <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                    {% for item in losers %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--surface-border);">
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            <div class="crop-animated-img" data-crop="{{ item.crop_name|lower }}" style="width: 36px; height: 36px; min-width: 36px;"></div>
+                            <div>
+                                <div style="font-weight: 700; font-size: 1.05rem;">{{ item.crop_name }}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: 500;">{{ item.category }}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 800; color: #DC2626; font-size: 1.1rem;">{{ item.pct_change|stringformat:".2f" }}%</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600;">₹{{ item.current_price }}/q</div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p style="color: var(--text-dim); font-style: italic;">Stability detected in market...</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Strategy Hub -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem;">
+        <div class="glass-card" style="padding: 3rem; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="width: 60px; height: 60px; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--primary); margin-bottom: 2rem;">
+                    <i data-lucide="book" style="width: 28px; height: 28px;"></i>
+                </div>
+                <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.2rem; color: var(--text-main);">Crop Guide</h3>
+                <p style="color: var(--text-dim); line-height: 1.8; font-weight: 500;">
+                    Explore a comprehensive encyclopedia of crops. Learn about optimal soil conditions, state-wise fertilization, and expert protection strategies.
+                </p>
+            </div>
+            <a href="{% url 'crops_list' %}" class="btn-premium" style="margin-top: 2.5rem; justify-content: center;">
+                Read the Guide <i data-lucide="arrow-right" style="width: 20px;"></i>
+            </a>
+        </div>
+
+        <div class="glass-card" style="padding: 3rem; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="width: 60px; height: 60px; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--secondary); margin-bottom: 2rem;">
+                    <i data-lucide="bar-chart-big" style="width: 28px; height: 28px;"></i>
+                </div>
+                <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.2rem; color: var(--text-main);">Mandi Prices</h3>
+                <p style="color: var(--text-dim); line-height: 1.8; font-weight: 500;">
+                    Stay ahead with real-time price monitoring across Indian markets. Filter by crop, region, and date to maximize your profitability.
+                </p>
+            </div>
+            <a href="{% url 'mandi_rates' %}" class="btn-premium" style="margin-top: 2.5rem; justify-content: center;">
+                Check Today's Rates <i data-lucide="trending-up" style="width: 20px;"></i>
+            </a>
+        </div>
+
+        <div class="glass-card" style="padding: 3rem; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="width: 60px; height: 60px; background: rgba(129, 140, 248, 0.1); border: 1px solid rgba(129, 140, 248, 0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #818cf8; margin-bottom: 2rem;">
+                    <i data-lucide="layers" style="width: 28px; height: 28px;"></i>
+                </div>
+                <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.2rem; color: var(--text-main);">Product Insights</h3>
+                <p style="color: var(--text-dim); line-height: 1.8; font-weight: 500;">
+                    Not sure which fertilizer or pesticide to use? Compare thousands of agricultural products to choose what's best for your farm's success.
+                </p>
+            </div>
+            <a href="{% url 'compare_products' %}" class="btn-premium" style="margin-top: 2.5rem; justify-content: center; background: #818cf8; box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);">
+                Find Better Products <i data-lucide="arrow-right" style="width: 20px;"></i>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cropImages = {
+            'wheat': {c1: '#F5DD00', c2: '#F5A623', emoji: '🌾'},
+            'rice': {c1: '#A3E635', c2: '#4ADE80', emoji: '🍚'},
+            'cotton': {c1: '#E0E7FF', c2: '#93C5FD', emoji: '☁️'},
+            'maize': {c1: '#FDE047', c2: '#EAB308', emoji: '🌽'},
+            'tomato': {c1: '#FCA5A5', c2: '#EF4444', emoji: '🍅'},
+            'potato': {c1: '#FCD34D', c2: '#D97706', emoji: '🥔'},
+            'soybean': {c1: '#D9F99D', c2: '#84CC16', emoji: '🌱'},
+            'sugarcane': {c1: '#86EFAC', c2: '#22C55E', emoji: '🎋'},
+            'groundnut': {c1: '#FCD34D', c2: '#D97706', emoji: '🥜'},
+            'mustard': {c1: '#FEF08A', c2: '#EAB308', emoji: '🌼'},
+            'default': {c1: '#86EFAC', c2: '#3B82F6', emoji: '🌿'}
+        };
+
+        const generateAnimatedSvg = (cropName) => {
+            let data = cropImages['default'];
+            for (const [key, val] of Object.entries(cropImages)) {
+                if (cropName.includes(key)) {
+                    data = val; break;
+                }
+            }
+            const randId = Math.random().toString(36).substring(7);
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+              <defs>
+                <linearGradient id="grad_${randId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="${data.c1}" />
+                  <stop offset="100%" stop-color="${data.c2}" />
+                </linearGradient>
+              </defs>
+              <g transform="translate(50, 50)">
+                <circle cx="0" cy="0" r="45" fill="url(#grad_${randId})" opacity="0.4">
+                  <animate attributeName="r" values="35;45;35" dur="3s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" />
+                </circle>
+                <g>
+                  <animateTransform attributeName="transform" type="translate" values="0,4; 0,-4; 0,4" dur="2.5s" repeatCount="indefinite" />
+                  <text x="0" y="5" font-size="45" text-anchor="middle" dominant-baseline="middle">${data.emoji}</text>
+                </g>
+              </g>
+            </svg>`;
+        };
+
+        document.querySelectorAll('.crop-animated-img').forEach(el => {
+            const cropName = el.getAttribute('data-crop') || 'default';
+            el.innerHTML = generateAnimatedSvg(cropName);
+        });
+    });
+</script>
+{% endblock %}

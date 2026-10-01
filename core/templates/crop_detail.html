@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="animate-up">
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+        <a href="{% url 'crops_list' %}" style="color: var(--primary); text-decoration: none; font-size: 1.5rem; background: var(--primary-light); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s;" onmouseover="this.style.transform='translateX(-5px)'" onmouseout="this.style.transform='translateX(0)'">
+            <i data-lucide="arrow-left" style="width: 20px;"></i>
+        </a>
+        <div class="crop-animated-img" data-crop="{{ crop.crop_name|lower }}" style="width: 50px; height: 50px; margin-left: 0.5rem;"></div>
+        <div>
+            <h2 style="margin: 0; font-size: 2.5rem; font-weight: 800; color: var(--text-main); letter-spacing: -1px;">{{ crop.crop_name }} <span style="font-weight: 600; color: var(--text-dim); font-size: 1.2rem;">({{ crop.scientific_name }})</span></h2>
+            <p style="margin: 0; color: var(--text-dim); font-size: 1rem; font-weight: 500;">Technical Crop Intelligence & stage-wise advisories</p>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2.5rem; align-items: start;">
+        <!-- Technical Advisories Timeline -->
+        <div class="glass-card" style="padding: 2.5rem;">
+            <h3 style="margin-top: 0; display: flex; align-items: center; gap: 0.8rem; font-size: 1.4rem; color: var(--primary); font-weight: 800;">
+                <div style="background: var(--primary-light); padding: 0.6rem; border-radius: 12px; display: flex; box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);">
+                    <i data-lucide="shield-check" style="width: 24px;"></i>
+                </div> 
+                Technical Advisories
+            </h3>
+            
+            {% if advisories %}
+            <div style="position: relative; margin-left: 20px; border-left: 2px dashed var(--surface-border); padding-left: 30px; margin-top: 3rem;">
+                {% for adv in advisories %}
+                <div style="margin-bottom: 3rem; position: relative;">
+                    <!-- Timeline Dot -->
+                    <div style="position: absolute; left: -41px; top: 0; width: 22px; height: 22px; background: var(--primary); border: 4px solid var(--bg); border-radius: 50%; box-shadow: 0 0 15px var(--primary-light);"></div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
+                        <h4 style="margin: 0; color: var(--text-main); font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 0.6rem;">
+                            {{ adv.growth_stage }}
+                            {% if adv.process_days %}
+                            <span style="background: var(--secondary-light); color: var(--secondary); padding: 0.3rem 0.7rem; border-radius: 12px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 0.4rem;">
+                                <i data-lucide="clock" style="width: 14px;"></i> {{ adv.process_days }}
+                            </span>
+                            {% endif %}
+                        </h4>
+                        <span style="background: rgba(255,255,255,0.05); border: 1px solid var(--surface-border); padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: var(--primary);">
+                            {{ adv.requirement_type }}
+                        </span>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--surface-border); border-radius: 20px; padding: 1.8rem; transition: 0.3s; box-shadow: var(--shadow-sm);" onmouseover="this.style.borderColor='var(--primary)'; this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.borderColor='var(--surface-border)'; this.style.background='rgba(255,255,255,0.02)'">
+                        <p style="margin: 0; font-weight: 700; font-size: 1.1rem; color: var(--text-main); line-height: 1.7; letter-spacing: -0.2px;">{{ adv.technical_recommendation }}</p>
+                        <p style="margin: 1.2rem 0 0; color: var(--text-dim); font-size: 0.95rem; display: flex; align-items: center; gap: 0.6rem; font-weight: 600;">
+                            <i data-lucide="beaker" style="width: 18px; color: var(--secondary);"></i> <b style="color: var(--text-dim);">Dosage:</b> <span style="color: var(--text-main);">{{ adv.dosage_per_acre }}</span>
+                        </p>
+                        {% if adv.notes %}
+                        <div style="margin-top: 1.8rem; border-radius: 16px; background: rgba(0, 255, 136, 0.03); border: 1px solid rgba(0, 255, 136, 0.1); padding: 1.5rem; font-size: 0.95rem; color: var(--text-main); line-height: 1.7; display: flex; flex-direction: column; gap: 0.8rem;">
+                            <span style="font-size: 0.75rem; color: var(--primary); font-weight: 900; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="microscope" style="width: 16px;"></i> Agronomic Context
+                            </span>
+                            <span style="font-weight: 500; color: var(--text-main); opacity: 0.9;">{{ adv.notes }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="margin-top: 2rem; padding: 3rem; text-align: center; border: 2px dashed var(--surface-border); border-radius: 16px; background: var(--bg);">
+                <i data-lucide="file-question" style="width: 40px; height: 40px; color: var(--text-dim); opacity: 0.5; margin-bottom: 1rem;"></i>
+                <p style="color: var(--text-dim); font-weight: 500;">No technical advisories currently available for this crop.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar: Meta & Market Context -->
+        <div style="display: flex; flex-direction: column; gap: 2.5rem; position: sticky; top: 120px;">
+            <!-- Crop Specs -->
+            <div class="glass-card" style="padding: 2rem;">
+                <h4 style="margin-top: 0; border-bottom: 2px solid var(--surface-border); padding-bottom: 1rem; color: var(--text-main); font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="layers" style="width: 18px; color: var(--secondary);"></i> Specifications
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 1.5rem; font-size: 0.95rem;">
+                    <div>
+                        <p style="margin: 0; color: var(--text-dim); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.3rem;">BEST SEASON</p>
+                        <p style="margin: 0; font-weight: 700; color: var(--text-main);">{{ crop.best_season }}</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0; color: var(--text-dim); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.3rem;">SOIL TYPE</p>
+                        <p style="margin: 0; font-weight: 700; color: var(--text-main);">{{ crop.best_soil_types }}</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0; color: var(--text-dim); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.3rem;">GROWTH DURATION</p>
+                        <p style="margin: 0; font-weight: 700; color: var(--text-main);">{{ crop.growth_duration_days }} Days</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0; color: var(--text-dim); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.3rem;">GROWING MONTHS</p>
+                        <p style="margin: 0; font-weight: 700; color: var(--text-main);">{{ crop.growing_months|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Market Context -->
+            <div class="glass-card" style="padding: 2rem;">
+                <h4 style="margin-top: 0; border-bottom: 2px solid var(--surface-border); padding-bottom: 1rem; color: var(--text-main); font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="trending-up" style="width: 18px; color: var(--primary);"></i> Recent Mandi Rates
+                </h4>
+                {% if mandi_data %}
+                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                    {% for rate in mandi_data %}
+                    <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--surface-border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; margin-bottom: 0.4rem;">
+                            <span style="font-weight: 700; color: var(--text-main);">{{ rate.mandi_name }}</span>
+                            <span style="color: var(--primary); font-weight: 800;">₹{{ rate.modal_price }} <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-dim);">/ {{ rate.units|default:"Qtl" }}</span></span>
+                        </div>
+                        {% if rate.retail_min_price %}
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); font-weight: 600; padding: 0.6rem; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid var(--surface-border);">
+                            <span>Retail: ₹{{ rate.retail_min_price }}-{{ rate.retail_max_price }}</span>
+                            <span style="color: var(--secondary);">Mall: ₹{{ rate.mall_min_price }}-{{ rate.mall_max_price }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <a href="{% url 'mandi_rates' %}?crop_id={{ crop.id }}" style="text-align: center; font-size: 0.85rem; color: var(--primary); font-weight: 800; text-decoration: none; margin-top: 0.5rem; padding: 0.8rem; border-radius: 10px; transition: all 0.3s; background: var(--primary-light); border: 1px solid rgba(0, 255, 136, 0.2);" onmouseover="this.style.boxShadow='0 0 15px rgba(0, 255, 136, 0.2)'" onmouseout="this.style.boxShadow='none'">
+                        View Complete Market Trends →
+                    </a>
+                </div>
+                {% else %}
+                <div style="margin-top: 1.5rem; padding: 2rem; text-align: center; border: 2px dashed var(--surface-border); border-radius: 16px;">
+                    <i data-lucide="bar-chart-2" style="width: 24px; height: 24px; color: var(--text-dim); opacity: 0.5; margin-bottom: 0.5rem;"></i>
+                    <p style="color: var(--text-dim); font-size: 0.85rem; font-weight: 500; font-style: italic; margin: 0;">No tracking data available for this variety yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cropImages = {
+            'wheat': {c1: '#F5DD00', c2: '#F5A623', emoji: '🌾'},
+            'rice': {c1: '#A3E635', c2: '#4ADE80', emoji: '🍚'},
+            'cotton': {c1: '#E0E7FF', c2: '#93C5FD', emoji: '☁️'},
+            'maize': {c1: '#FDE047', c2: '#EAB308', emoji: '🌽'},
+            'tomato': {c1: '#FCA5A5', c2: '#EF4444', emoji: '🍅'},
+            'potato': {c1: '#FCD34D', c2: '#D97706', emoji: '🥔'},
+            'soybean': {c1: '#D9F99D', c2: '#84CC16', emoji: '🌱'},
+            'sugarcane': {c1: '#86EFAC', c2: '#22C55E', emoji: '🎋'},
+            'groundnut': {c1: '#FCD34D', c2: '#D97706', emoji: '🥜'},
+            'mustard': {c1: '#FEF08A', c2: '#EAB308', emoji: '🌼'},
+            'default': {c1: '#86EFAC', c2: '#3B82F6', emoji: '🌿'}
+        };
+
+        const generateAnimatedSvg = (cropName) => {
+            let data = cropImages['default'];
+            for (const [key, val] of Object.entries(cropImages)) {
+                if (cropName.includes(key)) {
+                    data = val; break;
+                }
+            }
+            const randId = Math.random().toString(36).substring(7);
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+              <defs>
+                <linearGradient id="grad_${randId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="${data.c1}" />
+                  <stop offset="100%" stop-color="${data.c2}" />
+                </linearGradient>
+              </defs>
+              <g transform="translate(50, 50)">
+                <circle cx="0" cy="0" r="45" fill="url(#grad_${randId})" opacity="0.4">
+                  <animate attributeName="r" values="35;45;35" dur="3s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" />
+                </circle>
+                <g>
+                  <animateTransform attributeName="transform" type="translate" values="0,4; 0,-4; 0,4" dur="2.5s" repeatCount="indefinite" />
+                  <text x="0" y="5" font-size="45" text-anchor="middle" dominant-baseline="middle">${data.emoji}</text>
+                </g>
+              </g>
+            </svg>`;
+        };
+
+        document.querySelectorAll('.crop-animated-img').forEach(el => {
+            const cropName = el.getAttribute('data-crop') || 'default';
+            el.innerHTML = generateAnimatedSvg(cropName);
+        });
+    });
+</script>
+{% endblock %}

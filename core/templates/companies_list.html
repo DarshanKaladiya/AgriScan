@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    .link-active { opacity: 1; pointer-events: auto; }
+    .link-disabled { opacity: 0.4; pointer-events: none; background: rgba(255,255,255,0.05) !important; color: var(--text-dim) !important; border-color: rgba(255,255,255,0.05) !important; box-shadow: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="animate-up">
+    <div style="margin-bottom: 4rem;">
+        <h1 style="font-size: 3rem; font-weight: 800; letter-spacing: -1px; color: var(--text-main); margin-bottom: 0.5rem;">Corporate <span style="color: var(--primary);">Directory</span></h1>
+        <p style="color: var(--text-dim); font-size: 1.1rem; font-weight: 500;">Verified partners in Indian Seeds, Fertilizers, and Crop Protection.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+        {% for company in companies %}
+        <div class="glass-card" style="padding: 3rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; border-color: var(--surface-border);">
+            <div style="width: 80px; height: 80px; background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; color: var(--secondary); box-shadow: 0 0 15px rgba(251, 191, 36, 0.1);">
+                <i data-lucide="building-2" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 style="margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--text-main); height: 4rem; display: flex; align-items: center; justify-content: center; letter-spacing: -0.5px;">{{ company.name }}</h3>
+            
+            <div style="margin: 1.5rem 0; width: 100%; height: 1px; background: var(--surface-border);"></div>
+            
+            <a href="{% if company.website_url %}{{ company.website_url }}{% else %}#{% endif %}" 
+               target="_blank" 
+               class="btn-premium {% if company.website_url %}link-active{% else %}link-disabled{% endif %}" 
+               style="width: 100%; justify-content: center; font-size: 0.9rem; background: rgba(255,255,255,0.03); border: 2px solid var(--surface-border); color: var(--text-main); box-shadow: none; font-weight: 800; transition: all 0.3s;"
+               onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.borderColor='var(--secondary)'"
+               onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='var(--surface-border)'">
+                {% if company.website_url %}Official Website <i data-lucide="external-link" style="width: 16px;"></i>{% else %}Website Pending <i data-lucide="clock" style="width: 16px;"></i>{% endif %}
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
