@@ -243,6 +243,20 @@ def seed_disease_knowledge(db):
     diseases = [
         # --- TOMATO (crop_id: 30) ---
         {
+            "class_key": "Tomato___Bacterial_spot",
+            "crop_id": 30,
+            "crop_name": "Tomato",
+            "kind": "Disease",
+            "severity": "medium",
+            "name": {"en": "Bacterial Spot", "hi": "जीवाणु पत्ती धब्बा रोग (टमाटर)", "gu": "જીવાણુ પાન ટપકાં રોગ (ટામેટા)"},
+            "symptoms": {"en": "Small dark water-soaked circular spots with yellow halos on leaves, rough raised spots on fruit.", "hi": "पत्तियों और तनों पर पीले घेरे वाले छोटे गहरे पानी जैसे गोल धब्बे।", "gu": "પાન અને ડાળી પર પીળી કિનારીવાળા નાના કાળા ડાઘ."},
+            "prevention": {"en": "Use hot water treated seeds. Avoid overhead irrigation.", "hi": "गर्म पानी से उपचारित बीज बोएं। पत्तियों पर पानी न छिड़कें।", "gu": "ગરમ પાણીથી માવજત કરેલ બિયારણ વાવો. પાન ભીના ન રહે તેનું ધ્યાન રાખો."},
+            "treatment": {"en": "Spray Copper Oxychloride 50% WP (2.5 g/L) + Streptocycline upon first symptom.", "hi": "कॉपर ऑक्सीक्लोराइड 50% WP (2.5 ग्राम/लीटर) और स्ट्रेप्टोसाइक्लिन का छिड़काव करें।", "gu": "કોપર ઓક્સીક્લોરાઇડ ૫૦% WP સાથે સ્ટ્રેપ્ટોસાયક્લિન છાંટો."},
+            "recommended_technical_names": ["Copper Oxychloride 50% WP"],
+            "safety_note": {"en": "Bacterial spot spreads rapidly through wind-driven rains.", "hi": "हवा और बारिश के छींटों से यह जीवाणु तेजी से फैलता है।", "gu": "પવન અને વરસાદના છાંટાથી ઝડપથી ફેલાય છે."},
+            "audio": {"en": "audio/en/tomato_bacterial_spot.mp3", "hi": "audio/hi/tomato_bacterial_spot.mp3", "gu": "audio/gu/tomato_bacterial_spot.mp3"}
+        },
+        {
             "class_key": "Tomato___Early_blight",
             "crop_id": 30,
             "crop_name": "Tomato",
