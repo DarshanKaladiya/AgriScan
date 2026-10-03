@@ -19,6 +19,37 @@ class GovernmentAPIClient:
             "commodity_price": os.getenv("COMMODITY_RESOURCE_ID", "35985678-0d79-46b4-9ed6-6f13308a1d24")
         }
 
+    def check_health(self, timeout=3):
+        """
+        Lightweight health check probe to test if api.data.gov.in is reachable.
+        Returns tuple: (is_online: bool, message: str)
+        """
+        if not self.api_key:
+            return False, "DATA_GOV_API_KEY not configured in .env"
+        
+        res_id = self.resources.get("market_price", "9ef84268-d588-465a-a308-a864a43d0070")
+        url = f"{self.base_url}{res_id}?api-key={self.api_key}&format=json&limit=1"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AgriIntelligence/1.0",
+            "Accept": "application/json"
+        }
+        try:
+            start_t = time.time()
+            resp = requests.get(url, headers=headers, timeout=timeout)
+            duration = round((time.time() - start_t) * 1000, 2)
+            if resp.status_code == 200:
+                return True, f"Online (latency {duration}ms)"
+            elif resp.status_code in [502, 503, 504]:
+                return False, f"Server Busy / Unavailable (HTTP {resp.status_code})"
+            else:
+                return False, f"HTTP Error {resp.status_code}"
+        except requests.exceptions.ConnectionError:
+            return False, "Connection refused / Government server offline"
+        except requests.exceptions.Timeout:
+            return False, f"Timeout after {timeout}s"
+        except Exception as e:
+            return False, str(e)
+
     def get_data(self, resource_type="market_price", limit=100, date_filter=None, commodity_filter=None, retries=1, delay=2, timeout=6):
         """
         Fetches records from data.gov.in with quick timeout to prevent server freeze
@@ -74,22 +105,21 @@ class GovernmentAPIClient:
 
     def sync_market_prices(self, date_filter=None):
         """
-        Sync real-time market prices from data.gov.in into MySQL mandi_prices table.
+        Sync real-time market prices from data.gov.in into MongoDB mandi_prices collection.
         Falls back to local sync if external API is unreachable.
         """
         # Always prioritize market_price (Agmarknet all commodities)
         data = self.get_data("market_price", limit=500, date_filter=date_filter, timeout=8)
         
-        conn = get_connection()
-        if not conn:
+        db = get_connection()
+        if db is None:
             print("[GovernmentAPIClient] Database connection unavailable for sync.")
             return 0
-        cursor = conn.cursor()
         
-        # Fetch crop mappings
-        cursor.execute("SELECT id, crop_name FROM master_crops")
-        crop_rows = cursor.fetchall()
-        crop_map = {row[1].lower(): row[0] for row in crop_rows}
+        # Fetch crop mappings from MongoDB master_crops collection
+        crop_coll = db.master_crops if db.master_crops.count_documents({}) > 0 else db.crops
+        crop_rows = list(crop_coll.find({}, {"id": 1, "crop_name": 1, "_id": 0}))
+        crop_map = {c["crop_name"].lower(): c["id"] for c in crop_rows if "crop_name" in c and "id" in c}
         
         count = 0
         if data and "records" in data and len(data["records"]) > 0:
@@ -119,27 +149,33 @@ class GovernmentAPIClient:
                         continue
 
                     try:
-                        p_date = datetime.strptime(p_date_raw.strip(), "%d/%m/%Y").strftime("%Y-%m-%d")
+                        p_date_str = datetime.strptime(p_date_raw.strip(), "%d/%m/%Y").strftime("%Y-%m-%d")
                     except Exception:
-                        p_date = datetime.now().strftime("%Y-%m-%d")
+                        p_date_str = datetime.now().strftime("%Y-%m-%d")
                     
-                    sql = """INSERT INTO mandi_prices (crop_id, state, district, mandi_name, min_price, max_price, modal_price, price_date) 
-                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s) 
-                             ON DUPLICATE KEY UPDATE 
-                                modal_price=VALUES(modal_price),
-                                min_price=VALUES(min_price),
-                                max_price=VALUES(max_price)"""
-                    cursor.execute(sql, (crop_id, state, district, mandi, float(p_min_raw), float(p_max_raw), float(p_mod_raw), p_date))
+                    db.mandi_prices.update_one(
+                        {"crop_id": crop_id, "mandi_name": mandi, "price_date": p_date_str},
+                        {
+                            "$set": {
+                                "crop_id": crop_id,
+                                "state": state,
+                                "district": district,
+                                "mandi_name": mandi,
+                                "min_price": float(p_min_raw),
+                                "max_price": float(p_max_raw),
+                                "modal_price": float(p_mod_raw),
+                                "price_date": p_date_str
+                            }
+                        },
+                        upsert=True
+                    )
                     count += 1
                 except Exception as e:
                     print(f"[GovernmentAPIClient] Sync record parse error: {e}")
-            conn.commit()
-            print(f"[GovernmentAPIClient] Successfully synced {count} market price records from Government API.")
+            print(f"[GovernmentAPIClient] Successfully synced {count} market price records from Government API into MongoDB.")
         else:
             print("[GovernmentAPIClient] Government API returned no records or was offline.")
         
-        cursor.close()
-        conn.close()
         return count
 
     def sync_commodity_prices(self):

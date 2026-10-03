@@ -1,6 +1,6 @@
 fastapi
 uvicorn
-mysql-connector-python
+pymongo
 django
 python-dotenv
 pandas
@@ -11,3 +11,6 @@ html5lib
 beautifulsoup4
 feedparser
 requests
+bcrypt
+PyJWT
+

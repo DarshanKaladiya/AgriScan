@@ -3,24 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriIntelligence Dashboard</title>
+    <title>{% block title %}AgriScan | Offline AI Crop Disease Diagnosis & Market Intelligence{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --primary: #00ff88;
-            --primary-light: rgba(0, 255, 136, 0.1);
+            --primary-dark: #059669;
+            --primary-light: rgba(0, 255, 136, 0.12);
             --secondary: #fbbf24;
-            --secondary-light: rgba(251, 191, 36, 0.1);
-            --bg: #0a0c12;
-            --surface: rgba(255, 255, 255, 0.03);
+            --secondary-light: rgba(251, 191, 36, 0.12);
+            --danger: #f87171;
+            --danger-light: rgba(248, 113, 113, 0.12);
+            --bg: #07090e;
+            --surface: rgba(255, 255, 255, 0.035);
+            --surface-hover: rgba(255, 255, 255, 0.06);
             --surface-border: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
-            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 20px 50px -10px rgba(0, 0, 0, 0.5);
-            --neon-glow: 0 0 15px rgba(0, 255, 136, 0.3);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
+            --neon-glow: 0 0 20px rgba(0, 255, 136, 0.35);
         }
 
         * {
@@ -38,7 +42,7 @@
             line-height: 1.6;
         }
 
-        /* Organic Background Pattern */
+        /* Ambient Glow Mesh */
         .mesh-bg {
             position: fixed;
             top: 0;
@@ -47,17 +51,18 @@
             height: 100%;
             z-index: -1;
             background: 
-                radial-gradient(circle at 10% 20%, rgba(0, 255, 136, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.05) 0%, transparent 40%),
-                #0a0c12;
+                radial-gradient(circle at 15% 15%, rgba(0, 255, 136, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(16, 185, 129, 0.06) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(251, 191, 36, 0.04) 0%, transparent 40%),
+                #07090e;
         }
 
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.2rem 8%;
-            background: rgba(10, 12, 18, 0.7);
+            padding: 1.1rem 7%;
+            background: rgba(7, 9, 14, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--surface-border);
@@ -67,77 +72,231 @@
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.55rem;
             font-weight: 800;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.65rem;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo span {
             color: var(--primary);
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+            text-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+        }
+
+        .logo-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            margin-left: 0.3rem;
         }
 
         .nav-links {
             display: flex;
-            gap: 2.5rem;
+            align-items: center;
+            gap: 1.8rem;
         }
 
         .nav-links a {
             color: var(--text-dim);
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
+            font-size: 0.92rem;
+            transition: all 0.25s ease;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.45rem;
             position: relative;
         }
 
-        .nav-links a::after {
+        .nav-links a:hover, .nav-links a.active {
+            color: #ffffff;
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
             content: '';
             position: absolute;
-            width: 0;
+            width: 100%;
             height: 2px;
-            bottom: -4px;
+            bottom: -5px;
             left: 0;
             background-color: var(--primary);
-            transition: width 0.3s ease;
             border-radius: 2px;
             box-shadow: 0 0 8px var(--primary);
         }
 
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--text-main);
-        }
-
-        .nav-links a:hover::after, .nav-links a.active::after {
-            width: 100%;
-        }
-
-        .glass-card {
-            background: var(--surface);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--surface-border);
-            border-radius: 28px;
-            box-shadow: var(--shadow-md);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        /* Dropdown Menu */
+        .dropdown {
             position: relative;
-            overflow: hidden;
+            display: inline-block;
         }
 
-        .glass-card:hover {
-            transform: translateY(-6px);
+        .dropdown-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.25s;
+            padding: 0.4rem 0;
+        }
+
+        .dropdown-btn:hover {
+            color: #fff;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            min-width: 220px;
+            background: rgba(15, 20, 30, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            padding: 0.6rem;
             box-shadow: var(--shadow-lg);
-            border-color: rgba(0, 255, 136, 0.2);
+            z-index: 1050;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease forwards;
+        }
+
+        .dropdown-content a {
+            padding: 0.65rem 1rem;
+            border-radius: 10px;
+            color: var(--text-dim) !important;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.88rem;
+        }
+
+        .dropdown-content a:hover {
             background: rgba(255, 255, 255, 0.05);
+            color: var(--primary) !important;
+        }
+
+        .dropdown-content a::after {
+            display: none !important;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-app {
+            background: linear-gradient(135deg, #00ff88 0%, #059669 100%);
+            color: #000000 !important;
+            border: none;
+            padding: 0.65rem 1.3rem;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-app:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            border: 1px solid var(--surface-border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            text-decoration: none;
+        }
+
+        .btn-outline:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--surface-border);
+            border-radius: 100px;
+        }
+
+        .user-chip .role-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+        }
+
+        .role-officer {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .role-farmer {
+            background: rgba(0, 255, 136, 0.15);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.3);
         }
 
         .container {
-            max-width: 1440px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 4rem 8%;
+            padding: 2.5rem 7% 4rem;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--surface);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--surface-border);
+            border-radius: 24px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(0, 255, 136, 0.2);
+            background: var(--surface-hover);
         }
 
         .btn-premium {
@@ -150,7 +309,7 @@
             font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.6rem;
             text-decoration: none;
@@ -159,14 +318,96 @@
 
         .btn-premium:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
-            background: #20ff96;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.55);
+            background: #25ff98;
+        }
+
+        /* Alert notifications */
+        .alert {
+            padding: 1rem 1.4rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            border: 1px solid;
+            animation: slideDown 0.3s ease forwards;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 136, 0.08);
+            border-color: rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+        }
+
+        .alert-error {
+            background: rgba(248, 113, 113, 0.1);
+            border-color: rgba(248, 113, 113, 0.3);
+            color: #f87171;
+        }
+
+        .alert-info, .alert-warning {
+            background: rgba(251, 191, 36, 0.08);
+            border-color: rgba(251, 191, 36, 0.3);
+            color: #fbbf24;
+        }
+
+        /* Modal for Get the App */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .modal-card {
+            background: #0d111a;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 28px;
+            max-width: 540px;
+            width: 100%;
+            padding: 2.5rem;
+            box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8);
+            position: relative;
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            color: var(--text-dim);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
         }
 
         footer {
-            margin-top: 8rem;
-            padding: 4rem 8% 2rem;
-            background: rgba(0, 0, 0, 0.3);
+            margin-top: 6rem;
+            padding: 3.5rem 7% 2rem;
+            background: rgba(4, 6, 10, 0.85);
             border-top: 1px solid var(--surface-border);
             backdrop-filter: blur(10px);
         }
@@ -174,15 +415,15 @@
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 4rem;
-            margin-bottom: 4rem;
+            gap: 3.5rem;
+            margin-bottom: 3.5rem;
         }
 
         .footer-col h4 {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.3rem;
             font-weight: 800;
             color: var(--text-main);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -192,15 +433,15 @@
         }
 
         .footer-col ul li {
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.75rem;
         }
 
         .footer-col ul li a {
             color: var(--text-dim);
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            transition: 0.3s;
+            transition: 0.25s;
         }
 
         .footer-col ul li a:hover {
@@ -208,19 +449,9 @@
             padding-left: 4px;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 8px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-dim);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes slideUp {
@@ -228,106 +459,218 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .animate-up {
-            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 100px;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-        .badge-primary {
-            background: var(--primary-light);
-            color: var(--primary);
-        }
-        
-        /* Modern Inputs */
-        input, select {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid var(--surface-border) !important;
-            color: var(--text-main) !important;
-        }
-        input:focus, select:focus {
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1) !important;
+
+        @media (max-width: 900px) {
+            .navbar { padding: 1rem 5%; }
+            .nav-links { display: none; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <div class="mesh-bg"></div>
+
+    <!-- Navigation Header -->
     <nav class="navbar">
-        <div class="logo">
-            <i data-lucide="leaf"></i> AgriIntelligence
-        </div>
+        <a href="{% url 'dashboard' %}" class="logo">
+            <i data-lucide="shield-check" style="color: var(--primary); width: 28px; height: 28px;"></i>
+            Agri<span>Scan</span>
+            <span class="logo-tag">Offline AI</span>
+        </a>
+
         <div class="nav-links">
-            <a href="{% url 'dashboard' %}"><i data-lucide="layout-dashboard" style="width: 18px;"></i> Dashboard</a>
-            <a href="{% url 'crops_list' %}"><i data-lucide="book-open" style="width: 18px;"></i> Crop Guide</a>
-            <a href="{% url 'compare_products' %}"><i data-lucide="sliders" style="width: 18px;"></i> Product Insights</a>
-            <a href="{% url 'mandi_rates' %}"><i data-lucide="trending-up" style="width: 18px;"></i> Mandi Prices</a>
-            <a href="{% url 'partners_list' %}"><i data-lucide="building" style="width: 18px;"></i> Agri Networks</a>
+            <a href="{% url 'dashboard' %}" class="{% if request.path == '/' %}active{% endif %}">
+                <i data-lucide="layout-dashboard" style="width: 17px;"></i> Overview
+            </a>
+            <a href="{% url 'crops_list' %}" class="{% if '/crop' in request.path %}active{% endif %}">
+                <i data-lucide="book-open" style="width: 17px;"></i> Crop Guide
+            </a>
+            <a href="{% url 'my_scans' %}" class="{% if '/my-scans' in request.path %}active{% endif %}">
+                <i data-lucide="scan-line" style="width: 17px;"></i> My Scans
+            </a>
+            <a href="{% url 'field_reports' %}" class="{% if '/field-reports' in request.path %}active{% endif %}">
+                <i data-lucide="radar" style="width: 17px;"></i> Field Reports
+            </a>
+
+            <!-- More Services Dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-btn">
+                    <i data-lucide="layers" style="width: 17px;"></i> More <i data-lucide="chevron-down" style="width: 14px;"></i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="{% url 'mandi_rates' %}"><i data-lucide="trending-up" style="width: 16px;"></i> Mandi Prices</a>
+                    <a href="{% url 'compare_products' %}"><i data-lucide="sliders" style="width: 16px;"></i> Product Insights</a>
+                    <a href="{% url 'partners_list' %}"><i data-lucide="building-2" style="width: 16px;"></i> Agri Networks</a>
+                </div>
+            </div>
         </div>
-        <button class="btn-premium">
-            <i data-lucide="zap" style="width: 16px;"></i> Live Updates
-        </button>
+
+        <div class="nav-actions">
+            <!-- Get the App Trigger -->
+            <button class="btn-app" onclick="openAppModal()">
+                <i data-lucide="smartphone" style="width: 16px;"></i> Get App
+            </button>
+
+            <!-- Authentication Status -->
+            {% if request.session.user %}
+                <div class="user-chip">
+                    <i data-lucide="user" style="width: 16px; color: var(--text-dim);"></i>
+                    <span style="font-size: 0.88rem; font-weight: 600;">{{ request.session.user.name|truncatechars:15 }}</span>
+                    <span class="role-badge {% if request.session.user.role == 'officer' %}role-officer{% else %}role-farmer{% endif %}">
+                        {{ request.session.user.role }}
+                    </span>
+                    <a href="{% url 'logout' %}" title="Log Out" style="color: var(--text-dim); display: flex; align-items: center; margin-left: 0.2rem; transition: color 0.2s;">
+                        <i data-lucide="log-out" style="width: 15px;"></i>
+                    </a>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-outline">
+                    <i data-lucide="log-in" style="width: 15px;"></i> Log In
+                </a>
+                <a href="{% url 'signup' %}" class="btn-outline" style="border-color: rgba(0, 255, 136, 0.4); color: var(--primary);">
+                    Sign Up
+                </a>
+            {% endif %}
+        </div>
     </nav>
 
+    <!-- Main Container -->
     <div class="container">
+        <!-- Flash Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-error{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %}">
+                    {% if message.tags == 'success' %}
+                        <i data-lucide="check-circle" style="width: 20px;"></i>
+                    {% elif message.tags == 'error' %}
+                        <i data-lucide="alert-triangle" style="width: 20px;"></i>
+                    {% else %}
+                        <i data-lucide="info" style="width: 20px;"></i>
+                    {% endif %}
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         {% block content %}{% endblock %}
     </div>
 
+    <!-- Get App Modal -->
+    <div class="modal-overlay" id="appModal" onclick="closeAppModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeAppModal()">
+                <i data-lucide="x" style="width: 18px;"></i>
+            </button>
+            <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.2rem;">
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(0, 255, 136, 0.15); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                    <i data-lucide="smartphone" style="width: 26px; height: 26px;"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff;">AgriScan Android APK</h3>
+                    <p style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">100% Offline-First Mobile Diagnostic App</p>
+                </div>
+            </div>
+
+            <p style="color: var(--text-dim); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                Designed specifically for low-connectivity farm environments. The on-device MobileNetV2 neural network scans crop leaves in <strong>Airplane Mode</strong> without needing internet access.
+            </p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 2rem;">
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.8rem;">
+                    <div style="font-weight: 700; color: #fff; font-size: 0.88rem; margin-bottom: 0.2rem;"><i data-lucide="wifi-off" style="width: 14px; color: var(--primary); vertical-align: middle;"></i> Zero Internet</div>
+                    <div style="font-size: 0.78rem; color: var(--text-dim);">Diagnosis runs 100% on the device.</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.8rem;">
+                    <div style="font-weight: 700; color: #fff; font-size: 0.88rem; margin-bottom: 0.2rem;"><i data-lucide="languages" style="width: 14px; color: var(--secondary); vertical-align: middle;"></i> 3 Languages</div>
+                    <div style="font-size: 0.78rem; color: var(--text-dim);">English, Hindi & Gujarati audio.</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.8rem;">
+                    <div style="font-weight: 700; color: #fff; font-size: 0.88rem; margin-bottom: 0.2rem;"><i data-lucide="user-check" style="width: 14px; color: #60a5fa; vertical-align: middle;"></i> Guest Mode</div>
+                    <div style="font-size: 0.78rem; color: var(--text-dim);">Instant use with no login required.</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.8rem;">
+                    <div style="font-weight: 700; color: #fff; font-size: 0.88rem; margin-bottom: 0.2rem;"><i data-lucide="refresh-cw" style="width: 14px; color: #a78bfa; vertical-align: middle;"></i> Auto-Sync</div>
+                    <div style="font-size: 0.78rem; color: var(--text-dim);">Outbox uploads when online.</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.8rem;">
+                <a href="/scan-app/" class="btn-premium" style="flex: 1; justify-content: center; font-size: 0.9rem;">
+                    <i data-lucide="download" style="width: 18px;"></i> Launch Web Simulator
+                </a>
+                <button class="btn-outline" onclick="closeAppModal()" style="padding: 0.8rem 1.4rem;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
     <footer>
         <div class="footer-grid">
             <div class="footer-col">
                 <div class="logo" style="margin-bottom: 1.2rem;">
-                    <i data-lucide="leaf"></i> AgriIntelligence
+                    <i data-lucide="shield-check" style="color: var(--primary);"></i> Agri<span>Scan</span>
                 </div>
-                <p style="color: var(--text-dim); font-size: 0.95rem; max-width: 320px; line-height: 1.7;">
-                    Democratizing agricultural data through AI-driven insights and real-time market drift monitoring. Premium intelligence for modern farmers.
+                <p style="color: var(--text-dim); font-size: 0.9rem; max-width: 320px; line-height: 1.7;">
+                    The intelligence travels with the phone; only the reports travel over the network. Protecting farmers against crop disease losses through offline AI.
                 </p>
             </div>
             <div class="footer-col">
-                <h4>Platform</h4>
+                <h4>Diagnosis & Crops</h4>
                 <ul>
-                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                    <li><a href="{% url 'crops_list' %}">Crop Guide</a></li>
-                    <li><a href="{% url 'mandi_rates' %}">Real-time Prices</a></li>
+                    <li><a href="{% url 'crops_list' %}">Crop Health Directory</a></li>
+                    <li><a href="{% url 'my_scans' %}">My Scan History</a></li>
+                    <li><a href="{% url 'field_reports' %}">Officer Outbreak Surveillance</a></li>
                 </ul>
             </div>
             <div class="footer-col">
-                <h4>Data Sources</h4>
+                <h4>Market & Products</h4>
                 <ul>
-                    <li><a href="#">ICAR Registry</a></li>
-                    <li><a href="#">TNAU Guidelines</a></li>
-                    <li><a href="#">Agmarknet API</a></li>
+                    <li><a href="{% url 'mandi_rates' %}">APMC Mandi Rates (11,500+)</a></li>
+                    <li><a href="{% url 'compare_products' %}">Input Fungicide Comparison</a></li>
+                    <li><a href="{% url 'partners_list' %}">Certified Manufacturers</a></li>
                 </ul>
             </div>
             <div class="footer-col">
-                <h4>Support</h4>
+                <h4>Demo Credentials</h4>
                 <ul>
-                    <li><a href="#">Farmer Helpdesk</a></li>
-                    <li><a href="#">Technical Docs</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
+                    <li><span style="color: var(--primary); font-size: 0.85rem;">Farmer:</span> 9876543210 / farmer123</li>
+                    <li><span style="color: var(--secondary); font-size: 0.85rem;">Officer:</span> officer@agriscan.com / officer123</li>
+                    <li><a href="{% url 'login' %}" style="color: #60a5fa; font-weight: 600;">Go to Login &rarr;</a></li>
                 </ul>
             </div>
         </div>
-        <div style="padding-top: 2rem; border-top: 1px solid var(--surface-border); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 0.85rem; font-weight: 500;">
-            <p>&copy; 2026 AgriIntelligence Project. All rights reserved.</p>
+        <div style="padding-top: 2rem; border-top: 1px solid var(--surface-border); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 0.85rem; font-weight: 500; flex-wrap: wrap; gap: 1rem;">
+            <p>&copy; 2026 AgriScan Project. Offline Crop Disease & Advisory System.</p>
             <div style="display: flex; gap: 1.5rem;">
-                <a href="#" style="color: inherit; text-decoration: none; transition: color 0.3s;"><i data-lucide="twitter" style="width: 18px;"></i></a>
-                <a href="#" style="color: inherit; text-decoration: none; transition: color 0.3s;"><i data-lucide="linkedin" style="width: 18px;"></i></a>
-                <a href="#" style="color: inherit; text-decoration: none; transition: color 0.3s;"><i data-lucide="github" style="width: 18px;"></i></a>
+                <span style="color: var(--primary);"><i data-lucide="check-circle-2" style="width: 14px; vertical-align: middle;"></i> MongoDB Powered</span>
+                <span style="color: var(--secondary);"><i data-lucide="cpu" style="width: 14px; vertical-align: middle;"></i> On-Device AI</span>
             </div>
         </div>
     </footer>
 
     <script>
         lucide.createIcons();
+
+        function openAppModal() {
+            document.getElementById('appModal').style.display = 'flex';
+        }
+
+        function closeAppModal(e) {
+            if (!e || e.target.id === 'appModal' || e.target.closest('.modal-close') || e.target.tagName === 'BUTTON') {
+                document.getElementById('appModal').style.display = 'none';
+            }
+        }
     </script>
     {% block extra_js %}{% endblock %}
 </body>

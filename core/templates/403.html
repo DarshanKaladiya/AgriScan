@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh; text-align: center;">
+    <div class="glass-card animate-up" style="max-width: 580px; padding: 3.5rem 2.5rem; border-color: rgba(239, 68, 68, 0.3);">
+        <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: #ef4444;">
+            <i data-lucide="shield-alert" style="width: 36px; height: 36px;"></i>
+        </div>
+        <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.8rem; color: #f8fafc;">403 - Access Restricted</h2>
+        <p style="color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem;">
+            {{ message|default:"You do not have administrative clearance to access the Agricultural Officer Field Reports and Outbreak Surveillance dashboard." }}
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'dashboard' %}" class="btn-premium" style="background: rgba(255, 255, 255, 0.08); color: #fff; box-shadow: none;">
+                <i data-lucide="home" style="width: 18px;"></i> Return to Dashboard
+            </a>
+            <a href="{% url 'login' %}?next=/field-reports/" class="btn-premium">
+                <i data-lucide="lock" style="width: 18px;"></i> Switch to Officer Account
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In | AgriScan{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh; padding: 2rem 0;">
+    <div class="glass-card animate-up" style="max-width: 460px; width: 100%; padding: 2.5rem 2rem;">
+        
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 56px; height: 56px; border-radius: 18px; background: rgba(0, 255, 136, 0.12); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--primary);">
+                <i data-lucide="shield-check" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem;">Welcome to AgriScan</h2>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Sign in to sync your scans & access reports</p>
+        </div>
+
+        <!-- Quick Demo Credentials Box for Hackathon Judges -->
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(0, 255, 136, 0.3); border-radius: 14px; padding: 1rem; margin-bottom: 1.8rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px;">Quick Demo Accounts</span>
+                <span style="font-size: 0.72rem; color: var(--text-dim);">1-Click Fill</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button type="button" onclick="fillCreds('9876543210', 'farmer123')" class="btn-outline" style="padding: 0.35rem 0.7rem; font-size: 0.78rem; border-color: rgba(0, 255, 136, 0.25);">
+                    <i data-lucide="user" style="width: 13px; color: var(--primary);"></i> Farmer Demo
+                </button>
+                <button type="button" onclick="fillCreds('officer@agriscan.com', 'officer123')" class="btn-outline" style="padding: 0.35rem 0.7rem; font-size: 0.78rem; border-color: rgba(251, 191, 36, 0.3); color: #fbbf24;">
+                    <i data-lucide="radar" style="width: 13px; color: var(--secondary);"></i> Officer Demo
+                </button>
+            </div>
+        </div>
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <div style="margin-bottom: 1.3rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dim); margin-bottom: 0.5rem;">
+                    Mobile Number or Email
+                </label>
+                <div style="position: relative;">
+                    <i data-lucide="smartphone" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); width: 18px; color: var(--text-dim);"></i>
+                    <input type="text" id="login_id" name="login_id" required placeholder="e.g. 9876543210 or name@mail.com" style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.8rem; border-radius: 12px; font-size: 0.95rem; font-family: inherit;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.8rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dim); margin-bottom: 0.5rem;">
+                    Password
+                </label>
+                <div style="position: relative;">
+                    <i data-lucide="lock" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); width: 18px; color: var(--text-dim);"></i>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password" style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.8rem; border-radius: 12px; font-size: 0.95rem; font-family: inherit;">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; padding: 0.9rem; font-size: 1rem; margin-bottom: 1.5rem;">
+                <i data-lucide="log-in" style="width: 18px;"></i> Sign In
+            </button>
+        </form>
+
+        <div style="text-align: center; border-top: 1px solid var(--surface-border); padding-top: 1.5rem; font-size: 0.88rem; color: var(--text-dim);">
+            Don't have an account? 
+            <a href="{% url 'signup' %}" style="color: var(--primary); font-weight: 700; text-decoration: none; margin-left: 0.3rem;">Sign Up Free</a>
+        </div>
+        <div style="text-align: center; margin-top: 0.8rem; font-size: 0.82rem;">
+            <a href="{% url 'dashboard' %}" style="color: var(--text-dim); text-decoration: none;">&larr; Back to Public Portal</a>
+        </div>
+    </div>
+</div>
+
+<script>
+function fillCreds(id, pass) {
+    document.getElementById('login_id').value = id;
+    document.getElementById('password').value = pass;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}My Scans | AgriScan{% endblock %}
+
+{% block content %}
+<div class="animate-up">
+    <!-- Header banner -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem;">
+        <div>
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.25); padding: 0.35rem 0.9rem; border-radius: 100px; color: var(--primary); font-size: 0.82rem; font-weight: 700; margin-bottom: 0.8rem;">
+                <i data-lucide="user-check" style="width: 14px;"></i> {{ request.session.user.name }}'s Dashboard
+            </div>
+            <h1 style="font-size: 2.3rem; font-weight: 800; color: #fff; letter-spacing: -0.5px;">My Field Scans</h1>
+            <p style="color: var(--text-dim); font-size: 0.95rem; margin-top: 0.3rem;">
+                Historical crop leaf diagnoses uploaded from your AgriScan mobile app.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 0.8rem;">
+            <button onclick="openAppModal()" class="btn-premium">
+                <i data-lucide="scan-line" style="width: 18px;"></i> Scan New Leaf
+            </button>
+        </div>
+    </div>
+
+    {% if scans %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+            {% for scan in scans %}
+                <div class="glass-card" style="padding: 1.8rem; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <!-- Header: Crop + Severity + Confidence -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255, 255, 255, 0.06); padding: 0.25rem 0.65rem; border-radius: 6px; color: #cbd5e1;">
+                                {{ scan.class_key|slice:":10" }}
+                            </span>
+
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                {% if scan.severity == 'high' %}
+                                    <span style="background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase;">
+                                        High Risk
+                                    </span>
+                                {% elif scan.severity == 'medium' %}
+                                    <span style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase;">
+                                        Moderate
+                                    </span>
+                                {% else %}
+                                    <span style="background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase;">
+                                        Healthy
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Diagnosis Name -->
+                        <h3 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem; line-height: 1.3;">
+                            {{ scan.disease_name|default:scan.class_key }}
+                        </h3>
+
+                        <!-- Confidence Bar -->
+                        <div style="margin: 1rem 0 1.2rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem;">
+                                <span style="color: var(--text-dim);">Diagnosis Confidence</span>
+                                <span style="color: var(--primary);">{{ scan.confidence|floatformat:1 }}%</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 10px; overflow: hidden;">
+                                <div style="width: {{ scan.confidence }}%; height: 100%; background: linear-gradient(90deg, #059669, #00ff88); border-radius: 10px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Location & Time -->
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.82rem; color: var(--text-dim); margin-bottom: 1.2rem;">
+                            {% if scan.location and scan.location.region %}
+                                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                    <i data-lucide="map-pin" style="width: 14px; color: var(--secondary);"></i>
+                                    <span>{{ scan.location.region }}</span>
+                                </div>
+                            {% endif %}
+                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                <i data-lucide="calendar" style="width: 14px;"></i>
+                                <span>Scanned on {{ scan.scanned_at }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Recommended Product Links -->
+                        {% if scan.recommended_technical_names %}
+                            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+                                <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px; margin-bottom: 0.4rem;">
+                                    Recommended Treatment
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                                    {% for tech in scan.recommended_technical_names %}
+                                        <a href="{% url 'compare_products' %}?technical={{ tech|urlencode }}" style="font-size: 0.78rem; background: rgba(0, 255, 136, 0.1); color: var(--primary); text-decoration: none; padding: 0.2rem 0.5rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                            <i data-lucide="shopping-bag" style="width: 12px;"></i> {{ tech }} &rarr;
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Footer: Sync Confirmation -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--surface-border); font-size: 0.75rem; color: var(--text-dim);">
+                        <span style="display: flex; align-items: center; gap: 0.3rem; color: #10b981;">
+                            <i data-lucide="cloud-check" style="width: 14px;"></i> Synced to Cloud
+                        </span>
+                        <span style="font-family: monospace;">UUID: {{ scan.client_uuid|truncatechars:12 }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="glass-card" style="padding: 4rem 2rem; text-align: center; max-width: 600px; margin: 2rem auto;">
+            <div style="width: 68px; height: 68px; border-radius: 50%; background: rgba(0, 255, 136, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i data-lucide="leaf" style="width: 34px; height: 34px;"></i>
+            </div>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 0.6rem;">No Field Scans Yet</h3>
+            <p style="color: var(--text-dim); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem;">
+                You haven't uploaded any leaf scans yet. Open the AgriScan mobile app on your phone, photograph a diseased crop leaf, and when you reconnect to internet, your diagnosis will automatically appear here!
+            </p>
+            <button onclick="openAppModal()" class="btn-premium">
+                <i data-lucide="smartphone" style="width: 18px;"></i> Get AgriScan Mobile App
+            </button>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

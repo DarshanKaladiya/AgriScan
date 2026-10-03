@@ -23,6 +23,67 @@
                 Technical Advisories
             </h3>
             
+            {% if diseases %}
+            <!-- AgriScan Common Diseases & Pest Diagnoses -->
+            <div style="margin-bottom: 3.5rem; background: rgba(0, 255, 136, 0.03); border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 20px; padding: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.8rem;">
+                    <div>
+                        <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">AgriScan Model Diagnostic Coverage</span>
+                        <h3 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin-top: 0.2rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i data-lucide="scan-line" style="color: var(--primary); width: 22px;"></i> Common Diseases & Pests ({{ diseases|length }} Classes)
+                        </h3>
+                    </div>
+                    <button onclick="openAppModal()" class="btn-app" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+                        <i data-lucide="smartphone" style="width: 14px;"></i> Scan Leaf Now
+                    </button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem;">
+                    {% for d in diseases %}
+                    <div style="background: rgba(10, 15, 25, 0.8); border: 1px solid var(--surface-border); border-radius: 14px; padding: 1.2rem; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                                <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 4px; {% if d.severity == 'high' %}background: rgba(248, 113, 113, 0.15); color: #f87171;{% elif d.severity == 'medium' %}background: rgba(251, 191, 36, 0.15); color: #fbbf24;{% else %}background: rgba(0, 255, 136, 0.15); color: #00ff88;{% endif %}">
+                                    {{ d.kind|default:"Disease" }} &bull; {{ d.severity|default:"medium" }}
+                                </span>
+                                <span style="font-size: 0.72rem; color: var(--text-dim); display: flex; align-items: center; gap: 0.25rem;">
+                                    <i data-lucide="volume-2" style="width: 12px; color: var(--primary);"></i> EN/HI/GU
+                                </span>
+                            </div>
+
+                            <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-bottom: 0.2rem;">
+                                {{ d.name.en }}
+                            </h4>
+                            <div style="font-size: 0.8rem; color: var(--secondary); margin-bottom: 0.6rem;">
+                                {{ d.name.gu }} &bull; {{ d.name.hi }}
+                            </div>
+
+                            <p style="font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 0.8rem;">
+                                <strong>Symptoms:</strong> {{ d.symptoms.en|truncatewords:20 }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <div style="font-size: 0.8rem; color: #e2e8f0; line-height: 1.5; margin-bottom: 0.8rem;">
+                                <strong style="color: var(--primary);">Treatment:</strong> {{ d.treatment.en|truncatewords:18 }}
+                            </div>
+
+                            {% if d.recommended_technical_names %}
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem;">
+                                    {% for tech in d.recommended_technical_names %}
+                                        <a href="{% url 'compare_products' %}?technical={{ tech|urlencode }}" style="font-size: 0.72rem; background: rgba(0, 255, 136, 0.08); color: var(--primary); text-decoration: none; padding: 0.15rem 0.45rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.2rem;">
+                                            <i data-lucide="shield" style="width: 11px;"></i> {{ tech }}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             {% if advisories %}
             <div style="position: relative; margin-left: 20px; border-left: 2px dashed var(--surface-border); padding-left: 30px; margin-top: 3rem;">
                 {% for adv in advisories %}

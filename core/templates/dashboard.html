@@ -1,226 +1,242 @@
 {% extends 'base.html' %}
 
+{% block title %}AgriScan | Offline AI Crop Disease Diagnosis & Market Intelligence{% endblock %}
+
 {% block content %}
 <div class="animate-up">
-    <!-- Super Hero Section -->
-    <div style="margin-bottom: 5rem; text-align: left; padding-top: 4rem; position: relative;">
+    <!-- Super Hero Section: Offline Crop Disease Focus -->
+    <div style="margin-bottom: 4.5rem; text-align: left; padding-top: 2rem; position: relative;">
         <!-- Glowing background orb -->
-        <div style="position: absolute; top: -100px; left: -100px; width: 400px; height: 400px; background: var(--primary); filter: blur(150px); opacity: 0.1; z-index: -1;"></div>
-        
-        <div style="display: inline-flex; align-items: center; gap: 0.8rem; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.2); padding: 0.7rem 1.4rem; border-radius: 100px; color: var(--primary); font-size: 0.85rem; font-weight: 800; margin-bottom: 2.5rem; letter-spacing: 1px; text-transform: uppercase;">
-            <i data-lucide="sparkles" style="width: 16px;"></i> Next-Gen Agriculture Platform
+        <div style="position: absolute; top: -80px; left: -80px; width: 450px; height: 450px; background: var(--primary); filter: blur(160px); opacity: 0.12; z-index: -1;"></div>
+
+        <div style="display: inline-flex; align-items: center; gap: 0.7rem; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.25); padding: 0.6rem 1.3rem; border-radius: 100px; color: var(--primary); font-size: 0.85rem; font-weight: 800; margin-bottom: 2rem; letter-spacing: 0.8px; text-transform: uppercase;">
+            <i data-lucide="shield-check" style="width: 17px;"></i> Offline-First Farmer Protection
         </div>
-        <h1 style="font-size: 5rem; font-weight: 800; letter-spacing: -3px; line-height: 1; margin-bottom: 2rem; color: var(--text-main);">
-            Growing Your <br><span style="color: var(--primary); text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);">Agricultural</span> Future
+
+        <h1 style="font-size: 4.2rem; font-weight: 800; letter-spacing: -2px; line-height: 1.08; margin-bottom: 1.8rem; color: var(--text-main);">
+            Instant Crop Disease <br><span style="color: var(--primary); text-shadow: 0 0 35px rgba(0, 255, 136, 0.35);">Diagnosis Offline</span>
         </h1>
-        <p style="color: var(--text-dim); font-size: 1.3rem; max-width: 650px; line-height: 1.8; font-weight: 500;">
-            Your command center for real-time market insights, verified crop intelligence, and data-driven product comparisons. Built for the modern ecosystem.
+
+        <p style="color: var(--text-dim); font-size: 1.25rem; max-width: 720px; line-height: 1.75; font-weight: 500; margin-bottom: 2.5rem;">
+            Empowering farmers with on-device AI leaf scanning that works in <strong>Airplane Mode</strong>. Receive instant disease remedies with audio in English, ગુજરાતી, and हिंदी, backed by real-time APMC mandi market intelligence.
         </p>
+
+        <!-- CTA Action Buttons -->
+        <div style="display: flex; gap: 1.2rem; flex-wrap: wrap; align-items: center;">
+            <button onclick="openAppModal()" class="btn-premium" style="padding: 0.95rem 2.2rem; font-size: 1.05rem;">
+                <i data-lucide="smartphone" style="width: 22px;"></i> Get Offline Mobile App
+            </button>
+            <a href="{% url 'crops_list' %}" class="btn-outline" style="padding: 0.95rem 1.8rem; font-size: 1rem; border-color: rgba(255, 255, 255, 0.15);">
+                <i data-lucide="book-open" style="width: 19px;"></i> Explore Crop Health Guide
+            </a>
+            <a href="{% url 'field_reports' %}" class="btn-outline" style="padding: 0.95rem 1.8rem; font-size: 1rem; border-color: rgba(251, 191, 36, 0.3); color: #fbbf24;">
+                <i data-lucide="radar" style="width: 19px;"></i> Officer Surveillance Portal
+            </a>
+        </div>
     </div>
 
-    <!-- Stats Matrix -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.8rem; margin-bottom: 5rem;">
-        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(0, 255, 136, 0.1);">
-            <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.2); padding: 1.1rem; border-radius: 20px; color: var(--primary);">
-                <i data-lucide="sprout"></i>
+    <!-- Stats Matrix (Live from MongoDB) -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 4.5rem;">
+        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem;">
+            <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.2); padding: 1.1rem; border-radius: 18px; color: var(--primary);">
+                <i data-lucide="sprout" style="width: 28px; height: 28px;"></i>
             </div>
             <div>
-                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.3rem; font-weight: 800; letter-spacing: 1.5px;">ACTIVE CROPS</p>
-                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text-main);">{{ crops_count }}</h2>
+                <p style="font-size: 0.72rem; color: var(--text-dim); margin-bottom: 0.2rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">CROPS CATALOGED</p>
+                <h2 style="margin: 0; font-size: 2rem; font-weight: 800; color: #fff;">{{ crops_count }}</h2>
             </div>
         </div>
-        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(251, 191, 36, 0.1);">
-            <div style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.2); padding: 1.1rem; border-radius: 20px; color: var(--secondary);">
-                <i data-lucide="activity"></i>
+
+        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem;">
+            <div style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.2); padding: 1.1rem; border-radius: 18px; color: #fbbf24;">
+                <i data-lucide="bug" style="width: 28px; height: 28px;"></i>
             </div>
             <div>
-                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.3rem; font-weight: 800; letter-spacing: 1.5px;">MARKET DATA</p>
-                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text-main);">11.2K+</h2>
+                <p style="font-size: 0.72rem; color: var(--text-dim); margin-bottom: 0.2rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">DISEASE CLASSES</p>
+                <h2 style="margin: 0; font-size: 2rem; font-weight: 800; color: #fff;">{{ disease_count }}</h2>
             </div>
         </div>
-        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(129, 140, 248, 0.1);">
-            <div style="background: rgba(129, 140, 248, 0.1); border: 1px solid rgba(129, 140, 248, 0.2); padding: 1.1rem; border-radius: 20px; color: #818cf8;">
-                <i data-lucide="globe"></i>
+
+        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem;">
+            <div style="background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96, 165, 250, 0.2); padding: 1.1rem; border-radius: 18px; color: #60a5fa;">
+                <i data-lucide="activity" style="width: 28px; height: 28px;"></i>
             </div>
             <div>
-                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.3rem; font-weight: 800; letter-spacing: 1.5px;">NETWORKS</p>
-                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text-main);">{{ comp_count }}</h2>
+                <p style="font-size: 0.72rem; color: var(--text-dim); margin-bottom: 0.2rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">MANDI RECORDS</p>
+                <h2 style="margin: 0; font-size: 2rem; font-weight: 800; color: #fff;">11.5K+</h2>
             </div>
         </div>
-        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(244, 114, 182, 0.1);">
-            <div style="background: rgba(244, 114, 182, 0.1); border: 1px solid rgba(244, 114, 182, 0.2); padding: 1.1rem; border-radius: 20px; color: #f472b6;">
-                <i data-lucide="verified"></i>
+
+        <div class="glass-card" style="padding: 1.8rem; display: flex; align-items: center; gap: 1.2rem;">
+            <div style="background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.2); padding: 1.1rem; border-radius: 18px; color: #a78bfa;">
+                <i data-lucide="layers" style="width: 28px; height: 28px;"></i>
             </div>
             <div>
-                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.3rem; font-weight: 800; letter-spacing: 1.5px;">VERIFIED GUIDES</p>
-                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text-main);">48+</h2>
+                <p style="font-size: 0.72rem; color: var(--text-dim); margin-bottom: 0.2rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">INPUT PRODUCTS</p>
+                <h2 style="margin: 0; font-size: 2rem; font-weight: 800; color: #fff;">{{ products_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Architecture Pillars -->
+    <div style="margin-bottom: 4.5rem;">
+        <div style="text-align: center; max-width: 650px; margin: 0 auto 3rem;">
+            <span style="color: var(--primary); font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Architecture Pillars</span>
+            <h2 style="font-size: 2.2rem; font-weight: 800; color: #fff; margin-top: 0.4rem;">The Intelligence Travels with the Phone</h2>
+            <p style="color: var(--text-dim); font-size: 0.95rem; margin-top: 0.5rem;">Server connectivity is never required for core leaf disease diagnosis.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.8rem;">
+            <div class="glass-card" style="padding: 2.2rem; border-top: 3px solid var(--primary);">
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(0, 255, 136, 0.12); display: flex; align-items: center; justify-content: center; color: var(--primary); margin-bottom: 1.4rem;">
+                    <i data-lucide="wifi-off" style="width: 24px;"></i>
+                </div>
+                <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.6rem;">Zero-Network AI Inference</h3>
+                <p style="color: var(--text-dim); font-size: 0.92rem; line-height: 1.65;">
+                    The quantized MobileNetV2 neural network runs client-side inside the Android WebView. Leaf classification, confidence calculation, and symptom lookup complete within 1.5 seconds without internet.
+                </p>
+            </div>
+
+            <div class="glass-card" style="padding: 2.2rem; border-top: 3px solid var(--secondary);">
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(251, 191, 36, 0.12); display: flex; align-items: center; justify-content: center; color: #fbbf24; margin-bottom: 1.4rem;">
+                    <i data-lucide="volume-2" style="width: 24px;"></i>
+                </div>
+                <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.6rem;">Multilingual Audio Advice</h3>
+                <p style="color: var(--text-dim); font-size: 0.92rem; line-height: 1.65;">
+                    Simple, practical prevention measures and chemical remedies explained in English, ગુજરાતી, and हिंदी. Pre-bundled audio playback supports farmers of all literacy levels.
+                </p>
+            </div>
+
+            <div class="glass-card" style="padding: 2.2rem; border-top: 3px solid #60a5fa;">
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(96, 165, 250, 0.12); display: flex; align-items: center; justify-content: center; color: #60a5fa; margin-bottom: 1.4rem;">
+                    <i data-lucide="cloud-upload" style="width: 24px;"></i>
+                </div>
+                <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.6rem;">Outbox Sync & Early Alerts</h3>
+                <p style="color: var(--text-dim); font-size: 0.92rem; line-height: 1.65;">
+                    Diagnoses save to IndexedDB instantly. Once Wi-Fi or cellular network returns, pending scans upload idempotently to the MongoDB backend, empowering agricultural officers to detect outbreaks early.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supported Model Crop Classes Spotlight -->
+    <div class="glass-card" style="padding: 2.5rem; margin-bottom: 4.5rem; background: linear-gradient(135deg, rgba(0, 255, 136, 0.04) 0%, rgba(15, 23, 42, 0.6) 100%);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span style="color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">Diagnostic Coverage</span>
+                <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-top: 0.3rem;">Primary Target Crops & Diseases</h2>
+            </div>
+            <a href="{% url 'crops_list' %}" class="btn-outline" style="font-size: 0.85rem;">
+                Browse All 272 Master Crops &rarr;
+            </a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+            <!-- Tomato Card -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: 16px; padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                    <span style="font-weight: 800; font-size: 1.15rem; color: #fff;">Tomato (Solanum lycopersicum)</span>
+                    <span style="background: rgba(248, 113, 113, 0.15); color: #f87171; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 50px;">9 Classes</span>
+                </div>
+                <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 1rem;">
+                    Early Blight, Late Blight, Leaf Mold, Septoria Spot, Spider Mites, Target Spot, Yellow Leaf Curl Virus, Mosaic Virus, and Healthy.
+                </p>
+                <a href="{% url 'crop_detail' 30 %}" style="font-size: 0.82rem; color: var(--primary); text-decoration: none; font-weight: 700;">
+                    View Tomato Health Guide &rarr;
+                </a>
+            </div>
+
+            <!-- Potato Card -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: 16px; padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                    <span style="font-weight: 800; font-size: 1.15rem; color: #fff;">Potato (Solanum tuberosum)</span>
+                    <span style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 50px;">3 Classes</span>
+                </div>
+                <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 1rem;">
+                    Early Blight (Alternaria solani), Late Blight (Phytophthora infestans), and Healthy Foliage.
+                </p>
+                <a href="{% url 'crop_detail' 31 %}" style="font-size: 0.82rem; color: var(--primary); text-decoration: none; font-weight: 700;">
+                    View Potato Health Guide &rarr;
+                </a>
+            </div>
+
+            <!-- Maize Card -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: 16px; padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                    <span style="font-weight: 800; font-size: 1.15rem; color: #fff;">Maize (Zea mays)</span>
+                    <span style="background: rgba(96, 165, 250, 0.15); color: #60a5fa; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 50px;">4 Classes</span>
+                </div>
+                <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 1rem;">
+                    Gray Leaf Spot, Common Rust (Puccinia sorghi), Northern Leaf Blight, and Healthy Foliage.
+                </p>
+                <a href="{% url 'crop_detail' 3 %}" style="font-size: 0.82rem; color: var(--primary); text-decoration: none; font-weight: 700;">
+                    View Maize Health Guide &rarr;
+                </a>
             </div>
         </div>
     </div>
 
     <!-- Market Pulse Section -->
-    <div style="margin-bottom: 5rem;">
-        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-            <div style="background: var(--secondary-light); padding: 0.8rem; border-radius: 15px; color: var(--secondary);">
-                <i data-lucide="zap"></i>
+    <div style="margin-bottom: 4rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.8rem; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.8rem;">
+                <div style="background: rgba(251, 191, 36, 0.12); padding: 0.6rem; border-radius: 12px; color: #fbbf24;">
+                    <i data-lucide="zap" style="width: 22px;"></i>
+                </div>
+                <h2 style="font-size: 1.8rem; font-weight: 800; margin: 0; color: #fff;">APMC Mandi Market Pulse</h2>
             </div>
-            <h2 style="font-size: 2rem; font-weight: 800; margin: 0; color: var(--text-main);">Market Pulse</h2>
+            <a href="{% url 'mandi_rates' %}" class="btn-outline" style="font-size: 0.85rem;">
+                Explore All 11,500+ Mandi Rates &rarr;
+            </a>
         </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
             <!-- Top Gainers -->
-            <div class="glass-card" style="padding: 2.5rem; border-top: 4px solid var(--primary);">
-                <h3 style="font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.8rem; color: var(--text-main); font-weight: 700;">
-                    <i data-lucide="trending-up" style="color: var(--primary);"></i> Top Gainers
+            <div class="glass-card" style="padding: 2rem; border-top: 3px solid var(--primary);">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; color: #fff; font-weight: 700;">
+                    <i data-lucide="trending-up" style="color: var(--primary); width: 18px;"></i> Highest Valued Commodities
                 </h3>
-                <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
                     {% for item in gainers %}
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--surface-border);">
-                        <div style="display: flex; align-items: center; gap: 0.8rem;">
-                            <div class="crop-animated-img" data-crop="{{ item.crop_name|lower }}" style="width: 36px; height: 36px; min-width: 36px;"></div>
-                            <div>
-                                <div style="font-weight: 700; font-size: 1.05rem;">{{ item.crop_name }}</div>
-                                <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: 500;">{{ item.category }}</div>
-                            </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.8rem; border-bottom: 1px solid var(--surface-border);">
+                        <div>
+                            <div style="font-weight: 700; font-size: 1rem; color: #fff;">{{ item.crop_name }}</div>
+                            <div style="font-size: 0.78rem; color: var(--text-dim);">{{ item.category }}</div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-weight: 800; color: #059669; font-size: 1.1rem;">+{{ item.pct_change|stringformat:".2f" }}%</div>
-                            <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600;">₹{{ item.current_price }}/q</div>
+                            <div style="font-weight: 800; color: var(--primary); font-size: 1.05rem;">+{{ item.pct_change|stringformat:".2f" }}%</div>
+                            <div style="font-size: 0.78rem; color: var(--text-dim); font-weight: 600;">₹{{ item.current_price }}/q</div>
                         </div>
                     </div>
                     {% empty %}
-                    <p style="color: var(--text-dim); font-style: italic;">Monitoring market fluctuations...</p>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Monitoring mandi fluctuations...</p>
                     {% endfor %}
                 </div>
             </div>
 
             <!-- Top Losers -->
-            <div class="glass-card" style="padding: 2.5rem; border-top: 4px solid #DC2626;">
-                <h3 style="font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.8rem; color: var(--text-main); font-weight: 700;">
-                    <i data-lucide="trending-down" style="color: #DC2626;"></i> Top Losers
+            <div class="glass-card" style="padding: 2rem; border-top: 3px solid #f87171;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; color: #fff; font-weight: 700;">
+                    <i data-lucide="trending-down" style="color: #f87171; width: 18px;"></i> Market Price Corrections
                 </h3>
-                <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
                     {% for item in losers %}
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--surface-border);">
-                        <div style="display: flex; align-items: center; gap: 0.8rem;">
-                            <div class="crop-animated-img" data-crop="{{ item.crop_name|lower }}" style="width: 36px; height: 36px; min-width: 36px;"></div>
-                            <div>
-                                <div style="font-weight: 700; font-size: 1.05rem;">{{ item.crop_name }}</div>
-                                <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: 500;">{{ item.category }}</div>
-                            </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.8rem; border-bottom: 1px solid var(--surface-border);">
+                        <div>
+                            <div style="font-weight: 700; font-size: 1rem; color: #fff;">{{ item.crop_name }}</div>
+                            <div style="font-size: 0.78rem; color: var(--text-dim);">{{ item.category }}</div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-weight: 800; color: #DC2626; font-size: 1.1rem;">{{ item.pct_change|stringformat:".2f" }}%</div>
-                            <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600;">₹{{ item.current_price }}/q</div>
+                            <div style="font-weight: 800; color: #f87171; font-size: 1.05rem;">{{ item.pct_change|stringformat:".2f" }}%</div>
+                            <div style="font-size: 0.78rem; color: var(--text-dim); font-weight: 600;">₹{{ item.current_price }}/q</div>
                         </div>
                     </div>
                     {% empty %}
-                    <p style="color: var(--text-dim); font-style: italic;">Stability detected in market...</p>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">All commodity rates currently stable.</p>
                     {% endfor %}
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Strategy Hub -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem;">
-        <div class="glass-card" style="padding: 3rem; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="width: 60px; height: 60px; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--primary); margin-bottom: 2rem;">
-                    <i data-lucide="book" style="width: 28px; height: 28px;"></i>
-                </div>
-                <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.2rem; color: var(--text-main);">Crop Guide</h3>
-                <p style="color: var(--text-dim); line-height: 1.8; font-weight: 500;">
-                    Explore a comprehensive encyclopedia of crops. Learn about optimal soil conditions, state-wise fertilization, and expert protection strategies.
-                </p>
-            </div>
-            <a href="{% url 'crops_list' %}" class="btn-premium" style="margin-top: 2.5rem; justify-content: center;">
-                Read the Guide <i data-lucide="arrow-right" style="width: 20px;"></i>
-            </a>
-        </div>
-
-        <div class="glass-card" style="padding: 3rem; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="width: 60px; height: 60px; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--secondary); margin-bottom: 2rem;">
-                    <i data-lucide="bar-chart-big" style="width: 28px; height: 28px;"></i>
-                </div>
-                <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.2rem; color: var(--text-main);">Mandi Prices</h3>
-                <p style="color: var(--text-dim); line-height: 1.8; font-weight: 500;">
-                    Stay ahead with real-time price monitoring across Indian markets. Filter by crop, region, and date to maximize your profitability.
-                </p>
-            </div>
-            <a href="{% url 'mandi_rates' %}" class="btn-premium" style="margin-top: 2.5rem; justify-content: center;">
-                Check Today's Rates <i data-lucide="trending-up" style="width: 20px;"></i>
-            </a>
-        </div>
-
-        <div class="glass-card" style="padding: 3rem; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="width: 60px; height: 60px; background: rgba(129, 140, 248, 0.1); border: 1px solid rgba(129, 140, 248, 0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #818cf8; margin-bottom: 2rem;">
-                    <i data-lucide="layers" style="width: 28px; height: 28px;"></i>
-                </div>
-                <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.2rem; color: var(--text-main);">Product Insights</h3>
-                <p style="color: var(--text-dim); line-height: 1.8; font-weight: 500;">
-                    Not sure which fertilizer or pesticide to use? Compare thousands of agricultural products to choose what's best for your farm's success.
-                </p>
-            </div>
-            <a href="{% url 'compare_products' %}" class="btn-premium" style="margin-top: 2.5rem; justify-content: center; background: #818cf8; box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);">
-                Find Better Products <i data-lucide="arrow-right" style="width: 20px;"></i>
-            </a>
-        </div>
-    </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const cropImages = {
-            'wheat': {c1: '#F5DD00', c2: '#F5A623', emoji: '🌾'},
-            'rice': {c1: '#A3E635', c2: '#4ADE80', emoji: '🍚'},
-            'cotton': {c1: '#E0E7FF', c2: '#93C5FD', emoji: '☁️'},
-            'maize': {c1: '#FDE047', c2: '#EAB308', emoji: '🌽'},
-            'tomato': {c1: '#FCA5A5', c2: '#EF4444', emoji: '🍅'},
-            'potato': {c1: '#FCD34D', c2: '#D97706', emoji: '🥔'},
-            'soybean': {c1: '#D9F99D', c2: '#84CC16', emoji: '🌱'},
-            'sugarcane': {c1: '#86EFAC', c2: '#22C55E', emoji: '🎋'},
-            'groundnut': {c1: '#FCD34D', c2: '#D97706', emoji: '🥜'},
-            'mustard': {c1: '#FEF08A', c2: '#EAB308', emoji: '🌼'},
-            'default': {c1: '#86EFAC', c2: '#3B82F6', emoji: '🌿'}
-        };
-
-        const generateAnimatedSvg = (cropName) => {
-            let data = cropImages['default'];
-            for (const [key, val] of Object.entries(cropImages)) {
-                if (cropName.includes(key)) {
-                    data = val; break;
-                }
-            }
-            const randId = Math.random().toString(36).substring(7);
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
-              <defs>
-                <linearGradient id="grad_${randId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="${data.c1}" />
-                  <stop offset="100%" stop-color="${data.c2}" />
-                </linearGradient>
-              </defs>
-              <g transform="translate(50, 50)">
-                <circle cx="0" cy="0" r="45" fill="url(#grad_${randId})" opacity="0.4">
-                  <animate attributeName="r" values="35;45;35" dur="3s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" />
-                </circle>
-                <g>
-                  <animateTransform attributeName="transform" type="translate" values="0,4; 0,-4; 0,4" dur="2.5s" repeatCount="indefinite" />
-                  <text x="0" y="5" font-size="45" text-anchor="middle" dominant-baseline="middle">${data.emoji}</text>
-                </g>
-              </g>
-            </svg>`;
-        };
-
-        document.querySelectorAll('.crop-animated-img').forEach(el => {
-            const cropName = el.getAttribute('data-crop') || 'default';
-            el.innerHTML = generateAnimatedSvg(cropName);
-        });
-    });
-</script>
 {% endblock %}
