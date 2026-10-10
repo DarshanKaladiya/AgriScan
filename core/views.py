@@ -1,4 +1,7 @@
 import os
+import json
+import uuid
+from datetime import datetime
 from functools import wraps
 import requests
 from django.shortcuts import render, redirect
@@ -289,9 +292,11 @@ def logout_view(request):
 def my_scans(request):
     """Personal scan history for the signed-in farmer."""
     token = request.session.get("token")
+    user = request.session.get("user") or {}
+    user_id = user.get("id")
     scans = []
     try:
-        headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Bearer {token}"} if token else {}
         res = requests.get(f"{API_URL}/scans/mine", headers=headers, timeout=5)
         if res.status_code == 200:
             scans = res.json()
@@ -300,7 +305,30 @@ def my_scans(request):
             messages.warning(request, "Your session has expired. Please log in again.")
             return redirect("login")
     except Exception as e:
-        messages.error(request, "Unable to load scan history at this time.")
+        pass
+
+    # Reliable MongoDB fallback if scans is empty or API call had issues
+    if not scans and user_id:
+        try:
+            db = get_db()
+            if db is not None:
+                db_scans = list(db.scans.find({"user_id": user_id}, {"_id": 0}).sort("scanned_at", -1))
+                disease_cache = {d["class_key"]: d for d in db.disease_info.find({}, {"_id": 0})}
+                for s in db_scans:
+                    cleaned = clean_doc(s)
+                    ck = cleaned.get("class_key")
+                    if ck in disease_cache:
+                        d_info = disease_cache[ck]
+                        cleaned["disease_name"] = d_info.get("name", {}).get("en", ck)
+                        cleaned["severity"] = d_info.get("severity", "moderate")
+                        cleaned["treatment_summary"] = d_info.get("treatment", {}).get("en", "")
+                    else:
+                        parts = (ck or "Crop___Disease").split("___")
+                        cleaned["disease_name"] = parts[1].replace("_", " ") if len(parts) > 1 else ck
+                        cleaned["severity"] = "healthy" if "healthy" in (ck or "").lower() else "high" if cleaned.get("confidence", 0) > 85 else "moderate"
+                    scans.append(cleaned)
+        except Exception as err:
+            print("MongoDB fallback error:", err)
 
     return render(request, 'my_scans.html', {
         'scans': scans,
@@ -353,3 +381,143 @@ def set_language(request):
     response = redirect(next_url)
     response.set_cookie('agri_lang', lang, max_age=30*24*3600)
     return response
+
+
+import uuid
+from django.http import JsonResponse
+from db_utils import get_db, clean_doc
+
+@login_required
+def save_scan_view(request):
+    """
+    Persists client-side AI diagnosis results directly into MongoDB and
+    synchronizes with the backend so they appear immediately in Past Scans.
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+        class_key = data.get("class_key", "")
+        confidence = float(data.get("confidence", 0.0))
+        client_uuid = data.get("client_uuid") or f"scan_{uuid.uuid4().hex[:12]}"
+        user = request.session.get("user") or {}
+        user_id = user.get("id")
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        crop_id = 1
+        crop_name = "Crop"
+        if "potato" in class_key.lower():
+            crop_id = 10
+            crop_name = "Potato"
+        elif "tomato" in class_key.lower():
+            crop_id = 11
+            crop_name = "Tomato"
+        elif "corn" in class_key.lower() or "maize" in class_key.lower():
+            crop_id = 12
+            crop_name = "Corn (Maize)"
+
+        severity = "healthy" if "healthy" in class_key.lower() else ("high" if confidence > 85 else "medium")
+
+        # 1. Direct MongoDB upsert via db_utils
+        db = get_db()
+        if db is not None:
+            scan_doc = {
+                "client_uuid": client_uuid,
+                "user_id": user_id,
+                "class_key": class_key,
+                "crop_id": crop_id,
+                "confidence": confidence,
+                "severity": severity,
+                "language": request.session.get("lang") or "en",
+                "scanned_at": now_str,
+                "synced_at": now_str,
+                "location": {
+                    "region": "Gujarat, India"
+                }
+            }
+            db.scans.update_one(
+                {"client_uuid": client_uuid},
+                {"$set": scan_doc, "$setOnInsert": {"created_in_db": now_str}},
+                upsert=True
+            )
+
+        # 2. Sync to FastAPI backend if active
+        token = request.session.get("token")
+        if token:
+            try:
+                headers = {"Authorization": f"Bearer {token}"}
+                requests.post(
+                    f"{API_URL}/scans/sync",
+                    json={
+                        "scans": [{
+                            "client_uuid": client_uuid,
+                            "class_key": class_key,
+                            "crop_id": crop_id,
+                            "confidence": confidence,
+                            "scanned_at": now_str,
+                            "user_id": user_id
+                        }]
+                    },
+                    headers=headers,
+                    timeout=3
+                )
+            except Exception:
+                pass
+
+        return JsonResponse({
+            "status": "success",
+            "client_uuid": client_uuid,
+            "class_key": class_key,
+            "crop_name": crop_name,
+            "confidence": confidence,
+            "severity": severity,
+            "scanned_at": now_str
+        })
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+import mimetypes
+from django.http import HttpResponse, Http404, FileResponse
+from django.conf import settings
+
+def scan_app_view(request):
+    """
+    Serves the standalone 100% offline AgriScan PWA Single-Page Application.
+    Works seamlessly in browser, mobile viewport, and airplane mode via Service Worker.
+    """
+    index_file = settings.BASE_DIR / 'scan-app' / 'www' / 'index.html'
+    if not index_file.exists():
+        raise Http404("Offline scan-app not found")
+    with open(index_file, 'r', encoding='utf-8') as f:
+        content = f.read()
+    return HttpResponse(content, content_type='text/html')
+
+def scan_app_static(request, path):
+    """
+    Serves static assets (WASM binaries, ONNX model weights, JSON catalogues, CSS/JS)
+    for the offline scan-app PWA with correct MIME types and Service Worker scoping.
+    """
+    file_path = settings.BASE_DIR / 'scan-app' / 'www' / path
+    if not file_path.exists() or not file_path.is_file():
+        raise Http404(f"Asset {path} not found")
+
+    content_type, _ = mimetypes.guess_type(str(file_path))
+    if path.endswith('.wasm'):
+        content_type = 'application/wasm'
+    elif path.endswith('.json'):
+        content_type = 'application/json'
+    elif path.endswith('.js'):
+        content_type = 'application/javascript'
+    elif path.endswith('.css'):
+        content_type = 'text/css'
+    elif path.endswith('.onnx') or path.endswith('.tflite'):
+        content_type = 'application/octet-stream'
+
+    response = FileResponse(open(file_path, 'rb'), content_type=content_type or 'application/octet-stream')
+    if path == 'sw.js':
+        response['Service-Worker-Allowed'] = '/scan-app/'
+    response['Cache-Control'] = 'public, max-age=86400'
+    return response
+

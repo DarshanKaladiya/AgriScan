@@ -1,0 +1,17 @@
+{
+  "name": "AgriScan - Offline Crop Doctor",
+  "short_name": "AgriScan",
+  "description": "Offline Crop Disease & Pest Diagnosis for Farmers",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07090e",
+  "theme_color": "#00ff88",
+  "icons": [
+    {
+      "src": "img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

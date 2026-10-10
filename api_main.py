@@ -116,6 +116,7 @@ class ScanItem(BaseModel):
     language: Optional[str] = "en"
     location: Optional[LocationModel] = None
     scanned_at: Optional[str] = None
+    user_id: Optional[Any] = None
 
 class SyncScansRequest(BaseModel):
     scans: List[ScanItem]
@@ -317,6 +318,8 @@ def sync_scans(
         # If user is logged in, attach their user_id securely from the JWT token
         if current_user and current_user.get("id"):
             scan_dict["user_id"] = current_user["id"]
+        elif scan_dict.get("user_id"):
+            pass
         elif "user_id" not in scan_dict:
             scan_dict["user_id"] = None
 

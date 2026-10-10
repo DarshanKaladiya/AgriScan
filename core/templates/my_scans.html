@@ -133,32 +133,118 @@
         </div>
 
         <!-- Dropzone / Camera Area -->
-        <div id="dropzone" onclick="document.getElementById('leafFile').click();" style="border: 2px dashed rgba(0, 255, 136, 0.35); border-radius: 20px; padding: 3rem 2rem; text-align: center; cursor: pointer; transition: all 0.3s; background: rgba(0, 255, 136, 0.02);">
-            <input type="file" id="leafFile" accept="image/*" capture="environment" style="display: none;" onchange="handleImageSelected(this.files[0])">
-            
+        <div id="dropzone" style="border: 2px dashed rgba(0, 255, 136, 0.35); border-radius: 24px; padding: 2.2rem 1.5rem; text-align: center; transition: all 0.3s; background: rgba(0, 255, 136, 0.02); position: relative;">
+            <input type="file" id="leafFile" accept="image/*" style="display: none;" onchange="handleImageSelected(this.files[0])">
+            <canvas id="captureCanvas" style="display: none;"></canvas>
+
+            <!-- Mode 1: Initial Selection & Dual Actions -->
             <div id="uploadPrompt">
                 <div style="width: 80px; height: 80px; margin: 0 auto 1.2rem; border-radius: 50%; background: rgba(0, 255, 136, 0.1); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 255, 136, 0.3);">
                     <i data-lucide="camera" style="width: 40px; height: 40px; color: var(--primary);"></i>
                 </div>
-                <h3 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.4rem;">
-                    Snap or Upload Leaf Photo
+                <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.4rem;">
+                    {{ t.camera_scanner|default:"Live Leaf Camera & Diagnostics" }}
                 </h3>
-                <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.4rem; max-width: 500px; margin-left: auto; margin-right: auto;">
-                    Supports high-resolution camera capture or gallery upload (JPEG, PNG). Runs with offline acceleration.
+                <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.6rem; max-width: 520px; margin-left: auto; margin-right: auto;">
+                    Use your device camera for real-time leaf scanning, or choose an existing photo from your gallery.
                 </p>
-                <button type="button" class="btn-app" style="margin: 0 auto;" onclick="event.stopPropagation(); document.getElementById('leafFile').click();">
-                    <i data-lucide="upload" style="width: 16px;"></i> Choose Leaf Image
-                </button>
+
+                <!-- Dual Action Buttons -->
+                <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <button type="button" class="btn-app" style="background: linear-gradient(135deg, #00ff88 0%, #059669 100%); color: #000; font-weight: 800; padding: 0.75rem 1.6rem; border-radius: 12px; font-size: 0.95rem; box-shadow: 0 0 20px rgba(0, 255, 136, 0.35);" onclick="openLiveCamera();">
+                        <i data-lucide="video" style="width: 18px; height: 18px;"></i> {{ t.open_camera|default:"Open Live Camera" }}
+                    </button>
+                    <button type="button" class="btn-app" style="background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--surface-border); padding: 0.75rem 1.4rem; border-radius: 12px; font-size: 0.95rem;" onclick="document.getElementById('leafFile').click();">
+                        <i data-lucide="image" style="width: 18px; height: 18px;"></i> {{ t.upload_file|default:"Upload Photo" }}
+                    </button>
+                </div>
+                <div style="margin-top: 1.2rem; color: var(--text-dim); font-size: 0.8rem;">
+                    Supports Camera Stream, JPEG, PNG • Runs with offline acceleration
+                </div>
             </div>
 
-            <!-- Image Preview Area -->
+            <!-- Mode 2: Live Viewfinder Container -->
+            <div id="cameraContainer" style="display: none; max-width: 620px; margin: 0 auto; text-align: center;">
+                <!-- Viewfinder Header Chip -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 255, 136, 0.12); border: 1px solid rgba(0, 255, 136, 0.3); padding: 0.35rem 0.85rem; border-radius: 100px; color: var(--primary); font-size: 0.8rem; font-weight: 700;">
+                        <span class="pulse-dot" style="width: 8px; height: 8px; background: var(--primary); border-radius: 50%; display: inline-block;"></span>
+                        <span id="cameraStatusText">Live Camera Viewfinder</span>
+                    </div>
+                    <button type="button" onclick="closeLiveCamera();" style="background: rgba(255, 255, 255, 0.08); border: 1px solid var(--surface-border); color: var(--text-dim); border-radius: 100px; padding: 0.3rem 0.8rem; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <i data-lucide="x" style="width: 14px; height: 14px;"></i> {{ t.close_camera|default:"Close" }}
+                    </button>
+                </div>
+
+                <!-- Video Viewfinder Frame with HUD Overlay -->
+                <div class="camera-viewfinder-wrapper">
+                    <video id="cameraVideo" class="camera-video" autoplay playsinline muted></video>
+                    
+                    <!-- Corner HUD Brackets -->
+                    <div class="reticle-corner reticle-tl"></div>
+                    <div class="reticle-corner reticle-tr"></div>
+                    <div class="reticle-corner reticle-bl"></div>
+                    <div class="reticle-corner reticle-br"></div>
+                    
+                    <!-- Scanning Laser Beam -->
+                    <div class="scanner-laser"></div>
+
+                    <!-- Alignment Hint -->
+                    <div style="position: absolute; bottom: 16px; left: 0; right: 0; z-index: 12; text-align: center;">
+                        <span style="background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); color: #fff; padding: 0.3rem 0.8rem; border-radius: 100px; font-size: 0.78rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.15);">
+                            🌿 {{ t.camera_align_tip|default:"Position infected leaf inside brackets" }}
+                        </span>
+                    </div>
+
+                    <!-- Flash overlay on shutter press -->
+                    <div id="shutterFlash" class="shutter-flash"></div>
+                </div>
+
+                <!-- Camera Controls Toolbar -->
+                <div style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 1.4rem;">
+                    <!-- Flip Camera -->
+                    <button type="button" class="btn-app" style="background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--surface-border); border-radius: 100px; padding: 0.55rem 1.1rem; font-size: 0.85rem;" onclick="flipCamera();" title="{{ t.flip_camera|default:'Flip Camera' }}">
+                        <i data-lucide="refresh-cw" style="width: 15px; height: 15px;"></i> {{ t.flip_camera|default:"Flip" }}
+                    </button>
+
+                    <!-- Big Shutter Button -->
+                    <button type="button" id="shutterBtn" class="btn-shutter" onclick="capturePhoto();" title="{{ t.capture_leaf|default:'Capture Leaf' }}">
+                        <div class="shutter-inner">
+                            <i data-lucide="camera" style="width: 26px; height: 26px; color: #000;"></i>
+                        </div>
+                    </button>
+
+                    <!-- Switch to File Upload -->
+                    <button type="button" class="btn-app" style="background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--surface-border); border-radius: 100px; padding: 0.55rem 1.1rem; font-size: 0.85rem;" onclick="closeLiveCamera(); document.getElementById('leafFile').click();" title="{{ t.upload_file|default:'Upload Photo' }}">
+                        <i data-lucide="upload" style="width: 15px; height: 15px;"></i> {{ t.upload_file|default:"Upload" }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Camera Error Toast/Alert -->
+            <div id="cameraErrorBox" style="display: none; margin: 1.5rem auto 0; max-width: 550px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 16px; padding: 1.2rem; color: #f87171; text-align: left;">
+                <div style="display: flex; align-items: flex-start; gap: 0.8rem;">
+                    <i data-lucide="alert-circle" style="width: 22px; height: 22px; flex-shrink: 0; color: #ef4444; margin-top: 2px;"></i>
+                    <div>
+                        <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.2rem; color: #fff;">Camera Access Error</div>
+                        <div id="cameraErrorMsg" style="font-size: 0.85rem; line-height: 1.5; color: rgba(255, 255, 255, 0.85);">
+                            {{ t.camera_error|default:"Camera access is unavailable or was denied. Please allow camera permissions or upload an image file." }}
+                        </div>
+                        <button type="button" class="btn-app" style="margin-top: 0.8rem; background: rgba(255, 255, 255, 0.12); color: #fff; font-size: 0.82rem; padding: 0.4rem 0.9rem;" onclick="document.getElementById('leafFile').click();">
+                            <i data-lucide="upload" style="width: 14px;"></i> Choose File From Device Instead
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mode 3: Image Preview Area -->
             <div id="previewArea" style="display: none;">
                 <img id="previewImg" src="" alt="Leaf Preview" style="max-height: 280px; border-radius: 16px; border: 1px solid var(--surface-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 1.5rem;">
                 <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                    <button type="button" class="btn-app" style="background: var(--surface-border); color: #fff;" onclick="event.stopPropagation(); resetScanner();">
+                    <button type="button" class="btn-app" style="background: var(--surface-border); color: #fff;" onclick="resetScanner();">
                         <i data-lucide="refresh-cw" style="width: 16px;"></i> Retake Photo
                     </button>
-                    <button type="button" id="analyzeBtn" class="btn-app" style="background: var(--primary); color: #000; font-weight: 800;" onclick="event.stopPropagation(); runDiagnosis();">
+                    <button type="button" id="analyzeBtn" class="btn-app" style="background: var(--primary); color: #000; font-weight: 800;" onclick="runDiagnosis();">
                         <i data-lucide="scan" style="width: 16px;"></i> Diagnose Leaf Now
                     </button>
                 </div>
@@ -172,6 +258,68 @@
                 <span id="statusText">Analyzing leaf symptoms with crop disease model...</span>
             </div>
         </div>
+
+        
+        <!-- Unrecognized / Out-Of-Distribution Subject Card -->
+        <div id="unrecognizedBox" style="display: none; margin-top: 2.5rem; padding: 2.2rem; background: rgba(245, 158, 11, 0.04); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 24px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: flex-start; gap: 1.2rem;">
+                    <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #fbbf24; flex-shrink: 0;">
+                        <i data-lucide="help-circle" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div>
+                        <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(245, 158, 11, 0.15); color: #fbbf24; padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(245, 158, 11, 0.3); margin-bottom: 0.5rem;">
+                            <i data-lucide="alert-triangle" style="width: 13px;"></i> Out of Dataset Scope
+                        </div>
+                        <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.5px;">
+                            {{ t.unrecognized_title|default:"Inconclusive Scan / Unrecognized Subject" }}
+                        </h2>
+                        <p id="unrecognizedReasonText" style="color: var(--text-dim); font-size: 0.98rem; margin: 0.4rem 0 0; max-width: 650px; line-height: 1.6;">
+                            {{ t.unrecognized_reason|default:"The uploaded photo does not match any recognized crop leaves in the AgriScan dataset (Supported: Corn/Maize, Potato, Tomato)." }}
+                        </p>
+                    </div>
+                </div>
+
+                <div style="text-align: right;">
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--surface-border); padding: 0.5rem 1rem; border-radius: 12px; display: inline-block;">
+                        <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; display: block;">Confidence Score</span>
+                        <span id="unrecognizedConfidenceVal" style="font-size: 1.3rem; font-weight: 900; color: #fbbf24;">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guidelines Grid -->
+            <div style="background: rgba(10, 12, 18, 0.6); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 18px; padding: 1.4rem 1.6rem; margin-bottom: 1.8rem;">
+                <h4 style="color: #fff; font-size: 0.95rem; font-weight: 800; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="check-circle-2" style="width: 16px; color: var(--primary);"></i> {{ t.guidelines_title|default:"Tips for an Accurate Leaf Scan" }}
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem;">
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                        <span style="background: rgba(0, 255, 136, 0.1); color: var(--primary); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0;">1</span>
+                        <span style="color: var(--text-dim); font-size: 0.88rem; line-height: 1.5;">{{ t.tip_supported_crops|default:"Scan only supported crops: Corn (Maize), Potato, or Tomato leaves." }}</span>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                        <span style="background: rgba(0, 255, 136, 0.1); color: var(--primary); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0;">2</span>
+                        <span style="color: var(--text-dim); font-size: 0.88rem; line-height: 1.5;">{{ t.tip_close_up|default:"Hold camera steady 10–20 cm away with clear natural lighting." }}</span>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                        <span style="background: rgba(0, 255, 136, 0.1); color: var(--primary); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0;">3</span>
+                        <span style="color: var(--text-dim); font-size: 0.88rem; line-height: 1.5;">{{ t.tip_no_clutter|default:"Avoid fingers, people, background clutter, or non-plant objects." }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <button type="button" class="btn-app" style="background: linear-gradient(135deg, #00ff88 0%, #059669 100%); color: #000; font-weight: 800;" onclick="resetScanner(); openLiveCamera();">
+                    <i data-lucide="camera" style="width: 16px;"></i> Open Live Camera
+                </button>
+                <button type="button" class="btn-app" style="background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--surface-border);" onclick="resetScanner(); document.getElementById('leafFile').click();">
+                    <i data-lucide="upload" style="width: 16px;"></i> Choose Another Image
+                </button>
+            </div>
+        </div>
+
 
         <!-- Diagnosis Result Box -->
         <div id="resultBox" style="display: none; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--surface-border);">
@@ -280,17 +428,14 @@
                 <button class="filter-tab-btn" onclick="filterScans('medium')">Moderate</button>
                 <button class="filter-tab-btn" onclick="filterScans('healthy')">🌱 Healthy</button>
             </div>
-            {% if scans %}
-                <span style="color: var(--primary); font-size: 0.85rem; font-weight: 700; background: rgba(0, 255, 136, 0.1); padding: 0.35rem 0.8rem; border-radius: 8px;">
-                    {{ scans|length }} Records
-                </span>
-            {% endif %}
+            <span id="scansCountBadge" style="color: var(--primary); font-size: 0.85rem; font-weight: 700; background: rgba(0, 255, 136, 0.1); padding: 0.35rem 0.8rem; border-radius: 8px; {% if not scans %}display: none;{% endif %}">
+                <span id="scansCountNum">{{ scans|length }}</span> Records
+            </span>
         </div>
     </div>
 
-    {% if scans %}
-        <div id="scansContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
-            {% for scan in scans %}
+    <div id="scansContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; {% if not scans %}display: none;{% endif %}">
+        {% for scan in scans %}
                 <div class="glass-card scan-record-card" data-severity="{{ scan.severity|default:'medium' }}" style="padding: 1.8rem; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease;">
                     <div>
                         <!-- Header: Crop + Severity + Confidence -->
@@ -372,19 +517,18 @@
                     </div>
                 </div>
             {% endfor %}
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyScansCard" class="glass-card" style="padding: 3.5rem 2rem; text-align: center; border-radius: 20px; {% if scans %}display: none;{% endif %}">
+        <div style="width: 64px; height: 64px; background: rgba(0, 255, 136, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); margin: 0 auto 1.5rem;">
+            <i data-lucide="camera" style="width: 32px; height: 32px;"></i>
         </div>
-    {% else %}
-        <!-- Empty State -->
-        <div class="glass-card" style="padding: 3.5rem 2rem; text-align: center; border-radius: 20px;">
-            <div style="width: 64px; height: 64px; background: rgba(0, 255, 136, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); margin: 0 auto 1.5rem;">
-                <i data-lucide="camera" style="width: 32px; height: 32px;"></i>
-            </div>
-            <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">No Past Scans Found</h3>
-            <p style="color: var(--text-dim); font-size: 0.95rem; max-width: 480px; margin: 0 auto 1.5rem;">
-                You haven't recorded any field scans yet. Use the <strong>Snap or Upload Leaf Photo</strong> tool above to perform your first plant diagnosis!
-            </p>
-        </div>
-    {% endif %}
+        <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">No Past Scans Found</h3>
+        <p style="color: var(--text-dim); font-size: 0.95rem; max-width: 480px; margin: 0 auto 1.5rem;">
+            You haven't recorded any field scans yet. Use the <strong>Snap or Upload Leaf Photo</strong> tool above to perform your first plant diagnosis!
+        </p>
+    </div>
 </div>
 
 <style>
@@ -436,6 +580,107 @@
     50% { transform: scale(1.4); opacity: 1; }
     100% { transform: scale(0.9); opacity: 0.4; }
 }
+
+        /* Live Camera Viewfinder HUD */
+        .camera-viewfinder-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #000;
+            border: 2px solid rgba(0, 255, 136, 0.4);
+            box-shadow: 0 0 35px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .camera-video {
+            width: 100%;
+            max-height: 420px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Corner HUD Reticle Brackets */
+        .reticle-corner {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border: 3px solid var(--primary);
+            pointer-events: none;
+            z-index: 10;
+        }
+        .reticle-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; border-top-left-radius: 10px; }
+        .reticle-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; border-top-right-radius: 10px; }
+        .reticle-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; border-bottom-left-radius: 10px; }
+        .reticle-br { bottom: 20px; right: 20px; border-left: none; border-top: none; border-bottom-right-radius: 10px; }
+
+        /* Scanning Laser line */
+        .scanner-laser {
+            position: absolute;
+            top: 0;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+            box-shadow: 0 0 15px #00ff88, 0 0 5px #00ff88;
+            animation: scanLaser 2.4s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 9;
+        }
+
+        @keyframes scanLaser {
+            0% { top: 15%; opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { top: 85%; opacity: 0.3; }
+        }
+
+        /* Shutter Button */
+        .btn-shutter {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid var(--primary);
+            padding: 4px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+        .btn-shutter:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+        }
+        .btn-shutter:active {
+            transform: scale(0.92);
+        }
+        .shutter-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Shutter Flash */
+        .shutter-flash {
+            position: absolute;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+            transition: opacity 0.15s ease-out;
+        }
+        .shutter-flash.flash {
+            opacity: 0.85;
+        }
+
 </style>
 
 <!-- Load ONNX Runtime WebAssembly -->
@@ -515,6 +760,144 @@ function setLanguage(lang) {
     }
 }
 
+
+// ==========================================
+// LIVE CAMERA VIEWFINDER & CAPTURE ENGINE
+// ==========================================
+let currentCameraStream = null;
+let currentFacingMode = 'environment'; // default rear camera for crop scanning
+
+async function openLiveCamera() {
+    document.getElementById('uploadPrompt').style.display = 'none';
+    document.getElementById('cameraErrorBox').style.display = 'none';
+    document.getElementById('previewArea').style.display = 'none';
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('unrecognizedBox').style.display = 'none';
+    document.getElementById('cameraContainer').style.display = 'block';
+    lucide.createIcons();
+    await startCameraStream();
+}
+
+async function startCameraStream() {
+    stopCameraStream();
+    const errorBox = document.getElementById('cameraErrorBox');
+    const statusText = document.getElementById('cameraStatusText');
+    errorBox.style.display = 'none';
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showCameraError("Your browser or device does not support real-time camera access. Please use the file upload option.");
+        return;
+    }
+
+    try {
+        const constraints = {
+            video: {
+                facingMode: { ideal: currentFacingMode },
+                width: { ideal: 1920 },
+                height: { ideal: 1080 }
+            },
+            audio: false
+        };
+
+        let stream;
+        try {
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
+        } catch (strictErr) {
+            console.warn("Retrying camera with generic constraints:", strictErr);
+            stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        }
+
+        currentCameraStream = stream;
+        const video = document.getElementById('cameraVideo');
+        video.srcObject = stream;
+        await video.play();
+
+        const track = stream.getVideoTracks()[0];
+        const settings = track ? track.getSettings() : {};
+        const facing = settings.facingMode || currentFacingMode;
+        if (statusText) {
+            statusText.innerText = facing === 'user' ? 'Front Camera Active' : 'Rear Camera Active';
+        }
+    } catch (err) {
+        console.error("Camera access error:", err);
+        let msg = "Could not access camera. Please allow camera permissions in your browser or select an image file.";
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            msg = "Camera permission was denied. Please allow camera access in your browser settings to scan live.";
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+            msg = "No camera hardware detected on this device. Please upload an image instead.";
+        }
+        showCameraError(msg);
+    }
+}
+
+function showCameraError(message) {
+    document.getElementById('cameraContainer').style.display = 'none';
+    document.getElementById('uploadPrompt').style.display = 'block';
+    const errBox = document.getElementById('cameraErrorBox');
+    const errMsg = document.getElementById('cameraErrorMsg');
+    if (errMsg) errMsg.innerText = message;
+    errBox.style.display = 'block';
+    lucide.createIcons();
+}
+
+function stopCameraStream() {
+    if (currentCameraStream) {
+        currentCameraStream.getTracks().forEach(track => {
+            try { track.stop(); } catch(e){}
+        });
+        currentCameraStream = null;
+    }
+    const video = document.getElementById('cameraVideo');
+    if (video) {
+        video.srcObject = null;
+    }
+}
+
+function closeLiveCamera() {
+    stopCameraStream();
+    document.getElementById('cameraContainer').style.display = 'none';
+    document.getElementById('uploadPrompt').style.display = 'block';
+    lucide.createIcons();
+}
+
+async function flipCamera() {
+    currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
+    await startCameraStream();
+}
+
+function capturePhoto() {
+    const video = document.getElementById('cameraVideo');
+    if (!video || !currentCameraStream) return;
+
+    // Trigger visual flash feedback
+    const flash = document.getElementById('shutterFlash');
+    if (flash) {
+        flash.classList.add('flash');
+        setTimeout(() => flash.classList.remove('flash'), 150);
+    }
+
+    const canvas = document.getElementById('captureCanvas') || document.createElement('canvas');
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob((blob) => {
+        if (!blob) {
+            console.error("Failed to capture frame from video");
+            return;
+        }
+        const file = new File([blob], `leaf_scan_${Date.now()}.jpg`, { type: 'image/jpeg' });
+        
+        // Stop camera tracks cleanly
+        stopCameraStream();
+        document.getElementById('cameraContainer').style.display = 'none';
+        
+        // Hand off to existing image handler
+        handleImageSelected(file);
+    }, 'image/jpeg', 0.95);
+}
+
 function handleImageSelected(file) {
     if (!file) return;
     const reader = new FileReader();
@@ -523,17 +906,97 @@ function handleImageSelected(file) {
         document.getElementById('uploadPrompt').style.display = 'none';
         document.getElementById('previewArea').style.display = 'block';
         document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('unrecognizedBox').style.display = 'none';
     };
     reader.readAsDataURL(file);
 }
 
 function resetScanner() {
+    stopCameraStream();
     document.getElementById('leafFile').value = '';
     document.getElementById('uploadPrompt').style.display = 'block';
+    document.getElementById('cameraContainer').style.display = 'none';
+    document.getElementById('cameraErrorBox').style.display = 'none';
     document.getElementById('previewArea').style.display = 'none';
     document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('unrecognizedBox').style.display = 'none';
     document.getElementById('statusIndicator').style.display = 'none';
     currentDiagnosisKey = null;
+    lucide.createIcons();
+}
+
+
+// Check whether an image has plant/foliage color characteristics
+function checkFoliagePresence(imgElement) {
+    try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 100;
+        canvas.height = 100;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(imgElement, 0, 0, 100, 100);
+        const data = ctx.getImageData(0, 0, 100, 100).data;
+        
+        let plantPixelCount = 0;
+        const totalPixels = 100 * 100;
+
+        for (let i = 0; i < totalPixels; i++) {
+            const r = data[i * 4 + 0];
+            const g = data[i * 4 + 1];
+            const b = data[i * 4 + 2];
+
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            const diff = max - min;
+
+            // Exclude pure grayscale/white/black background
+            if (diff > 18) {
+                // Typical crop leaf tones: dominant green, yellowish-green, olive, or blight brown
+                if ((g >= r && g > b) || (g > b * 1.15 && r > b * 0.9 && g > 35)) {
+                    plantPixelCount++;
+                }
+            }
+        }
+        return (plantPixelCount / totalPixels);
+    } catch(e) {
+        return 0.5; // fallback
+    }
+}
+
+// Compute Softmax probabilities safely
+function computeSoftmax(arr) {
+    let maxVal = -Infinity;
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] > maxVal) maxVal = arr[i];
+    }
+    let sumExp = 0;
+    const exps = new Float32Array(arr.length);
+    for (let i = 0; i < arr.length; i++) {
+        exps[i] = Math.exp(arr[i] - maxVal);
+        sumExp += exps[i];
+    }
+    const probs = new Float32Array(arr.length);
+    for (let i = 0; i < arr.length; i++) {
+        probs[i] = exps[i] / sumExp;
+    }
+    return probs;
+}
+
+function renderUnrecognizedDetails(confidenceScore, customReason) {
+    document.getElementById('resultBox').style.display = 'none';
+    const unbox = document.getElementById('unrecognizedBox');
+    const confVal = document.getElementById('unrecognizedConfidenceVal');
+    const reasonEl = document.getElementById('unrecognizedReasonText');
+
+    if (confVal) {
+        confVal.innerText = confidenceScore ? (confidenceScore + '% (Low)') : 'Out of Scope';
+    }
+    if (reasonEl && customReason) {
+        reasonEl.innerText = customReason;
+    }
+
+    unbox.style.display = 'block';
+    unbox.scrollIntoView({ behavior: 'smooth' });
+    lucide.createIcons();
 }
 
 function getTensorFromImage(imgElement) {
@@ -559,8 +1022,20 @@ async function runDiagnosis() {
     statusBox.style.display = 'block';
 
     try {
+        // Step 1: Pre-check foliage presence
+        const foliageRatio = checkFoliagePresence(img);
+        console.log("🌿 Foliage pixel ratio:", (foliageRatio * 100).toFixed(1) + "%");
+
+        if (foliageRatio < 0.10) {
+            console.warn("⚠️ Non-plant or out-of-distribution image detected (low foliage ratio).");
+            renderUnrecognizedDetails(null, "No crop leaf foliage was detected in this photo. Please upload a clear photo of an actual plant leaf.");
+            return;
+        }
+
         let bestKey = "Potato___Early_blight";
         let confidence = 99.4;
+        let top1Val = 0.994;
+        let top2Val = 0.001;
 
         if (ortSession) {
             const inputTensor = getTensorFromImage(img);
@@ -568,30 +1043,203 @@ async function runDiagnosis() {
             const outputMap = await ortSession.run({ [inputName]: inputTensor });
             const outputData = outputMap[ortSession.outputNames[0]].data;
 
+            // Check if outputs are raw logits or probabilities
+            let sum = 0;
+            for (let i = 0; i < outputData.length; i++) sum += outputData[i];
+            const probs = (sum > 0.98 && sum < 1.02) ? outputData : computeSoftmax(outputData);
+
             let maxIdx = 0;
-            let maxVal = outputData[0];
-            for (let i = 1; i < outputData.length; i++) {
-                if (outputData[i] > maxVal) {
-                    maxVal = outputData[i];
+            let maxVal = probs[0];
+            for (let i = 1; i < probs.length; i++) {
+                if (probs[i] > maxVal) {
+                    maxVal = probs[i];
                     maxIdx = i;
                 }
             }
+
+            // Find second highest class to test margin
+            let secondIdx = -1;
+            let secondVal = -1;
+            for (let i = 0; i < probs.length; i++) {
+                if (i !== maxIdx && probs[i] > secondVal) {
+                    secondVal = probs[i];
+                    secondIdx = i;
+                }
+            }
+
+            top1Val = maxVal;
+            top2Val = secondVal;
+
             if (labelsList.length > maxIdx) {
                 bestKey = labelsList[maxIdx];
                 confidence = Math.min(99.4, (maxVal * 100)).toFixed(1);
             }
         }
 
+        console.log(`Diagnostic top class: ${bestKey}, confidence: ${confidence}%, top2: ${(top2Val * 100).toFixed(1)}%`);
+
+        // Step 2: Strict Confidence & OOD Guard
+        // Standard dataset acceptance threshold is 65.0%
+        const CONFIDENCE_THRESHOLD = 65.0;
+        const isLowConfidence = parseFloat(confidence) < CONFIDENCE_THRESHOLD;
+        const isIndecisive = (top1Val - top2Val < 0.20) && (parseFloat(confidence) < 75.0);
+        const isFoliageWeak = (foliageRatio < 0.18) && (parseFloat(confidence) < 80.0);
+
+        if (isLowConfidence || isIndecisive || isFoliageWeak) {
+            console.warn(`[REJECTED] Inconclusive scan: confidence ${confidence}% < threshold ${CONFIDENCE_THRESHOLD}%`);
+            currentDiagnosisKey = null;
+            renderUnrecognizedDetails(
+                confidence,
+                `The scan result is inconclusive (${confidence}% confidence). The uploaded photo does not match any recognized disease patterns in the AgriScan dataset (Corn, Potato, Tomato).`
+            );
+            return;
+        }
+
+        // Passed verification: Render valid disease diagnosis
         currentDiagnosisKey = bestKey;
         renderDiagnosisDetails(bestKey, confidence);
+        saveScanToHistory(bestKey, confidence);
+
     } catch(err) {
         console.error("Diagnosis error:", err);
-        currentDiagnosisKey = "Potato___Early_blight";
-        renderDiagnosisDetails(currentDiagnosisKey, 99.4);
+        renderUnrecognizedDetails(null, "An error occurred during image inference. Please try again with a clear photo.");
     } finally {
         statusBox.style.display = 'none';
         lucide.createIcons();
     }
+}
+
+
+// Helper to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Automatically save confirmed diagnosis to database
+async function saveScanToHistory(classKey, confidenceScore) {
+    try {
+        const csrfToken = getCookie('csrftoken');
+        const clientUuid = 'scan_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+        
+        const response = await fetch('/save-scan/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                class_key: classKey,
+                confidence: parseFloat(confidenceScore),
+                client_uuid: clientUuid
+            })
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log("✅ Scan successfully saved to field history:", result);
+            insertScanCardIntoDOM(result);
+        } else {
+            console.warn("Failed to persist scan via backend:", response.status);
+        }
+    } catch(err) {
+        console.error("Error saving scan to history:", err);
+    }
+}
+
+// Dynamically insert newly diagnosed scan card into Past Field Scans Log
+function insertScanCardIntoDOM(data) {
+    const emptyCard = document.getElementById('emptyScansCard');
+    if (emptyCard) emptyCard.style.display = 'none';
+
+    const container = document.getElementById('scansContainer');
+    if (!container) return;
+    container.style.display = 'grid';
+
+    const severity = data.severity || (data.confidence > 85 ? 'high' : 'medium');
+    const isHealthy = severity === 'healthy' || data.class_key.toLowerCase().includes('healthy');
+    const sevBadge = isHealthy 
+        ? `<span style="background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 50px; text-transform: uppercase;">Healthy</span>`
+        : (severity === 'high' 
+            ? `<span style="background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 50px; text-transform: uppercase;">High Risk</span>`
+            : `<span style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 50px; text-transform: uppercase;">Moderate</span>`);
+
+    const adv = advisoryData ? advisoryData[data.class_key] : null;
+    const diseaseTitle = (adv && adv.name) ? (adv.name[currentLanguage] || adv.name.en) : data.class_key.replace("___", " - ").replace(/_/g, " ");
+    const cropTag = data.class_key.split("___")[0].replace("_", " ");
+
+    const card = document.createElement('div');
+    card.className = 'glass-card scan-record-card animate-up';
+    card.setAttribute('data-severity', isHealthy ? 'healthy' : severity);
+    card.style = 'padding: 1.8rem; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease; border-color: rgba(0, 255, 136, 0.3);';
+
+    card.innerHTML = `
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255, 255, 255, 0.06); padding: 0.3rem 0.7rem; border-radius: 8px; color: #cbd5e1; border: 1px solid var(--surface-border);">
+                    <i data-lucide="leaf" style="width: 12px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> ${cropTag}
+                </span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    ${sevBadge}
+                </div>
+            </div>
+
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem; line-height: 1.3;">
+                ${diseaseTitle}
+            </h3>
+
+            <div style="margin: 1rem 0 1.2rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem;">
+                    <span style="color: var(--text-dim);">Diagnostic Confidence</span>
+                    <span style="color: var(--primary);">${parseFloat(data.confidence).toFixed(1)}%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 10px; overflow: hidden;">
+                    <div style="width: ${data.confidence}%; height: 100%; background: linear-gradient(90deg, #059669, #00ff88); border-radius: 10px;"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.82rem; color: var(--text-dim); margin-bottom: 1.2rem;">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <i data-lucide="calendar" style="width: 14px;"></i>
+                    <span>${data.scanned_at || 'Just now'}</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--surface-border); font-size: 0.75rem; color: var(--text-dim);">
+            <span style="display: flex; align-items: center; gap: 0.35rem; color: #10b981; font-weight: 600;">
+                <i data-lucide="check-circle-2" style="width: 14px;"></i> New Scan Saved
+            </span>
+            <span style="font-family: monospace; font-size: 0.72rem; opacity: 0.7;">UUID: ${(data.client_uuid || '').slice(0, 12)}</span>
+        </div>
+    `;
+
+    container.prepend(card);
+
+    // Update count badge
+    const countBadge = document.getElementById('scansCountBadge');
+    const countNum = document.getElementById('scansCountNum');
+    if (countBadge) countBadge.style.display = 'inline-block';
+    if (countNum) {
+        const currentCount = parseInt(countNum.innerText || '0') + 1;
+        countNum.innerText = currentCount;
+    }
+
+    // Update total scans stat counter in top KPI card
+    const totalKpiHeading = document.querySelector('h3:has(~ span), h3:has(+ span)');
+    // Recalculate statistics
+    calculateStatistics();
+    lucide.createIcons();
 }
 
 function renderDiagnosisDetails(classKey, confidenceScore) {
@@ -632,6 +1280,7 @@ function renderDiagnosisDetails(classKey, confidenceScore) {
         document.getElementById('compareLink').href = `/compare/?technical=${encodeURIComponent(chemicals[0])}`;
     }
 
+    document.getElementById('unrecognizedBox').style.display = 'none';
     document.getElementById('resultBox').style.display = 'block';
     document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
 }

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from core import views
@@ -19,8 +19,13 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('logout/', views.logout_view, name='logout'),
     path('my-scans/', views.my_scans, name='my_scans'),
+    path('save-scan/', views.save_scan_view, name='save_scan'),
     path('field-reports/', views.field_reports, name='field_reports'),
     path('set-language/', views.set_language, name='set_language'),
+
+    # AgriScan 100% Offline PWA App & Asset Streaming
+    path('scan-app/', views.scan_app_view, name='scan_app'),
+    re_path(r'^scan-app/(?P<path>.+)$', views.scan_app_static, name='scan_app_static'),
 ]
 
 if settings.DEBUG:

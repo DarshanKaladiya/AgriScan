@@ -5,6 +5,26 @@ Languages: English (en), Hindi (hi), Gujarati (gu)
 
 TRANSLATIONS = {
     "en": {
+        # Unrecognized / OOD Guard (en)
+        "unrecognized_title": "Inconclusive Scan / Unrecognized Subject",
+        "unrecognized_subtitle": "This photo does not match any recognized crop disease in the AgriScan dataset.",
+        "unrecognized_reason": "The uploaded photo appears to be either a non-plant object, an unsupported plant species, or too blurry for reliable diagnosis. AgriScan currently supports Corn (Maize), Potato, and Tomato foliage.",
+        "guidelines_title": "Tips for an Accurate Leaf Scan",
+        "tip_supported_crops": "Scan only supported crops: Corn, Potato, or Tomato leaves",
+        "tip_close_up": "Hold the camera steady 10–20 cm away with good natural lighting",
+        "tip_no_clutter": "Avoid fingers, people, backgrounds, or non-plant objects",
+        "btn_try_again": "Try Scanning Again",
+
+        # Camera Scanner (en)
+        "camera_scanner": "Live Camera Scanner",
+        "open_camera": "Open Live Camera",
+        "upload_file": "Upload Leaf Photo",
+        "capture_leaf": "Capture Leaf",
+        "flip_camera": "Flip Camera",
+        "close_camera": "Close Camera",
+        "camera_align_tip": "Position the infected crop leaf inside the brackets",
+        "camera_error": "Camera access is unavailable or was denied. Please allow camera permission or choose an image file.",
+
         # Brand & Global
         "brand_name": "AgriIntelligence",
         "brand_tagline": "Autonomous Agro-Advisory",
@@ -145,6 +165,10 @@ TRANSLATIONS = {
     },
     
     "hi": {
+        # Unrecognized / OOD Guard (hi)
+
+        # Camera Scanner (hi)
+
         # Brand & Global
         "brand_name": "एग्री-इंटेलिजेंस",
         "brand_tagline": "स्वायत्त कृषि परामर्श प्रणाली",
@@ -285,6 +309,10 @@ TRANSLATIONS = {
     },
     
     "gu": {
+        # Unrecognized / OOD Guard (gu)
+
+        # Camera Scanner (gu)
+
         # Brand & Global
         "brand_name": "એગ્રી-ઇન્ટેલિજન્સ",
         "brand_tagline": "સ્વાયત્ત કૃષિ સલાહકાર પ્રણાલી",

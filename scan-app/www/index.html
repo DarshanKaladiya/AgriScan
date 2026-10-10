@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AgriScan - Offline AI Crop Doctor</title>
+  
+  <!-- Web App Manifest for PWA Home Screen Installation -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07090e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- Offline Native Stylesheet -->
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <!-- Top App Bar -->
+  <header class="app-header">
+    <div class="brand-title">
+      <span style="color: var(--primary); font-size: 1.4rem;">🌿</span> Agri<span>Scan</span>
+    </div>
+
+    <!-- Network Status Pill -->
+    <div id="networkStatusPill" class="status-pill pill-offline">
+      <span class="dot-offline"></span>
+      <span data-i18n="offlineMode">Offline Mode</span>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="lang-bar">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="hi">हिंदी</button>
+      <button class="lang-btn" data-lang="gu">ગુજ</button>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="view-container">
+
+    <!-- Outbox Sync Alert Banner -->
+    <div id="outboxBanner" class="outbox-banner" style="display: none;">
+      <div>
+        <span>⏳ <strong id="pendingSyncCount">0</strong></span>
+        <span data-i18n="waitingToSync">scans waiting to sync</span>
+      </div>
+      <button class="btn-secondary" style="width: auto; padding: 0.3rem 0.7rem; font-size: 0.75rem;" onclick="SyncService.syncOutboxNow()" data-i18n="syncNow">
+        Sync Now
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: WELCOME & ONBOARDING               -->
+    <!-- ========================================== -->
+    <section id="view-welcome" class="view-section">
+      <div class="card" style="text-align: center; padding: 2.5rem 1.5rem;">
+        <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(0,255,136,0.1); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; font-size: 2rem;">
+          🌱
+        </div>
+        <h2 style="font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem;" data-i18n="appName">AgriScan</h2>
+        <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.8rem;" data-i18n="tagline">Offline AI Crop Doctor</p>
+
+        <p style="color: var(--primary); font-size: 0.85rem; font-weight: 700; margin-bottom: 1.5rem; background: rgba(0,255,136,0.08); padding: 0.6rem; border-radius: 12px;" data-i18n="guestModeNotice">
+          Scanning works 100% offline without an account.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <button class="btn-primary" onclick="App.continueAsGuest()" data-i18n="guestModeBtn">
+            Continue as Guest
+          </button>
+          <button class="btn-secondary" onclick="App.openAuthView('login')">
+            🔑 Log In to Account
+          </button>
+          <button class="btn-secondary" onclick="App.openAuthView('signup')" style="border-color: rgba(0,255,136,0.3); color: var(--primary);">
+            📝 Create New Account
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: SCANNER HOME DASHBOARD             -->
+    <!-- ========================================== -->
+    <section id="view-home" class="view-section active">
+      <!-- User Greeting Card -->
+      <div class="card" style="padding: 1rem 1.2rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div>
+          <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase;">Farmer Profile</span>
+          <h4 id="userNameDisplay" style="color: #fff; font-size: 1.05rem; font-weight: 800; margin: 0.1rem 0 0;">Guest Farmer</h4>
+        </div>
+        <span id="userRoleBadge" style="background: rgba(0,255,136,0.12); color: var(--primary); font-size: 0.75rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: 100px; text-transform: uppercase;">
+          Guest
+        </span>
+      </div>
+
+      <!-- Main Action Card -->
+      <div class="card" style="text-align: center; padding: 2rem 1.5rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.8rem;">📸</div>
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem;" data-i18n="scanLeaf">
+          Scan a Crop Leaf
+        </h3>
+        <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;" data-i18n="scanSub">
+          Snap or pick a leaf photo for instant offline diagnosis
+        </p>
+
+        <!-- Hidden input for file picker fallback -->
+        <input type="file" id="hiddenFileInput" accept="image/*" style="display: none;" onchange="App.handleFileSelect(this.files[0])">
+
+        <button class="btn-primary" style="margin-bottom: 0.8rem;" onclick="App.openCameraView()" data-i18n="takePhoto">
+          Open Live Camera
+        </button>
+
+        <button class="btn-secondary" onclick="document.getElementById('hiddenFileInput').click()" data-i18n="chooseGallery">
+          Choose from Gallery
+        </button>
+      </div>
+
+      <!-- Supported Crops Badge -->
+      <div style="text-align: center; margin-bottom: 1.5rem; font-size: 0.82rem; color: var(--text-dim);">
+        Supported: <strong>Corn (Maize), Potato, Tomato</strong> foliage
+      </div>
+
+      <!-- Quick Recent History -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+        <h4 style="color: #fff; font-size: 1rem; font-weight: 800;" data-i18n="recentScans">Field Scan History</h4>
+        <button onclick="App.showView('view-history')" style="background: none; border: none; color: var(--primary); font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+          View All &rarr;
+        </button>
+      </div>
+
+      <div id="homeRecentScans">
+        <!-- Injected via App.renderHistory() -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: LIVE CAMERA VIEWFINDER             -->
+    <!-- ========================================== -->
+    <section id="view-capture" class="view-section">
+      <div class="viewfinder-wrapper">
+        <video id="cameraVideo" class="viewfinder-video" autoplay playsinline muted></video>
+        
+        <!-- Reticle Corners -->
+        <div class="reticle-corner reticle-tl"></div>
+        <div class="reticle-corner reticle-tr"></div>
+        <div class="reticle-corner reticle-bl"></div>
+        <div class="reticle-corner reticle-br"></div>
+        
+        <!-- Laser Beam -->
+        <div class="laser-beam"></div>
+
+        <div style="position: absolute; bottom: 12px; left: 0; right: 0; text-align: center;">
+          <span style="background: rgba(0,0,0,0.65); color: #fff; padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600;">
+            Position leaf inside brackets
+          </span>
+        </div>
+      </div>
+
+      <!-- Camera Action Buttons -->
+      <div style="display: flex; justify-content: space-around; align-items: center; margin-top: 1.2rem;">
+        <button class="btn-secondary" style="width: auto; padding: 0.6rem 1rem; border-radius: 50px;" onclick="App.flipCamera()">
+          🔄 Flip
+        </button>
+
+        <button class="shutter-btn" onclick="App.captureShutter()">
+          <div class="shutter-core"></div>
+        </button>
+
+        <button class="btn-secondary" style="width: auto; padding: 0.6rem 1rem; border-radius: 50px;" onclick="App.showView('view-home')">
+          ✖ Close
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: DIAGNOSTIC RESULT SCREEN           -->
+    <!-- ========================================== -->
+    <section id="view-result" class="view-section">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+          <span id="resCropName" style="background: rgba(255,255,255,0.08); color: #cbd5e1; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; padding: 0.25rem 0.65rem; border-radius: 8px;">
+            Crop
+          </span>
+          <span id="resSeverityPill" class="status-pill pill-online">
+            Severity
+          </span>
+        </div>
+
+        <h2 id="resDiseaseTitle" style="font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 0.6rem; letter-spacing: -0.5px;">
+          Disease Detected
+        </h2>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+          <span id="resConfidenceBadge" style="background: rgba(0,255,136,0.15); color: var(--primary); font-size: 0.95rem; font-weight: 800; padding: 0.3rem 0.8rem; border-radius: 8px;">
+            98.5% Match
+          </span>
+
+          <button class="btn-secondary" style="width: auto; padding: 0.45rem 0.9rem; font-size: 0.82rem;" onclick="App.playVoiceGuidance()">
+            🔊 <span data-i18n="listenVoice">Listen Advice</span>
+          </button>
+        </div>
+
+        <!-- Symptoms -->
+        <div style="margin-bottom: 1.2rem;">
+          <h5 style="color: var(--warning); font-size: 0.82rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.3rem;" data-i18n="symptoms">
+            Visual Symptoms
+          </h5>
+          <p id="resSymptoms" style="color: var(--text-dim); font-size: 0.92rem; line-height: 1.5;">--</p>
+        </div>
+
+        <!-- Organic Prevention -->
+        <div style="margin-bottom: 1.2rem;">
+          <h5 style="color: var(--primary); font-size: 0.82rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.3rem;" data-i18n="prevention">
+            Organic Prevention
+          </h5>
+          <p id="resPrevention" style="color: var(--text-dim); font-size: 0.92rem; line-height: 1.5;">--</p>
+        </div>
+
+        <!-- Chemical Treatment -->
+        <div style="margin-bottom: 1.2rem;">
+          <h5 style="color: #60a5fa; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.3rem;" data-i18n="treatment">
+            Prescribed Treatment
+          </h5>
+          <p id="resTreatment" style="color: #fff; font-size: 0.95rem; font-weight: 600; line-height: 1.5; margin-bottom: 0.6rem;">--</p>
+          <div id="resChemicalsBox" style="display: flex; gap: 0.4rem; flex-wrap: wrap;"></div>
+        </div>
+
+        <!-- Safety Advisory -->
+        <div style="background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.25); border-radius: 12px; padding: 0.75rem 1rem; color: #fca5a5; font-size: 0.82rem; margin-bottom: 1.5rem;" data-i18n="safetyNote">
+          Safety Advisory: Always wear protective gear when applying chemicals.
+        </div>
+
+        <button class="btn-primary" onclick="App.showView('view-home')" data-i18n="retakeScan">
+          Scan Another Leaf
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: INCONCLUSIVE / UNRECOGNIZED SCREEN -->
+    <!-- ========================================== -->
+    <section id="view-inconclusive" class="view-section">
+      <div class="card" style="border-color: rgba(251,191,36,0.35);">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center;">⚠️</div>
+        <h3 style="color: #fff; font-size: 1.35rem; font-weight: 800; text-align: center; margin-bottom: 0.4rem;" data-i18n="inconclusiveTitle">
+          Inconclusive Scan / Unrecognized
+        </h3>
+        <p id="inconclusiveReason" style="color: var(--text-dim); font-size: 0.9rem; text-align: center; margin-bottom: 1.5rem;">
+          The photo does not match supported crop diseases.
+        </p>
+
+        <!-- Guidelines -->
+        <div style="background: rgba(0,0,0,0.4); border-radius: 14px; padding: 1rem; margin-bottom: 1.5rem;">
+          <h5 style="color: var(--primary); font-size: 0.82rem; font-weight: 800; margin-bottom: 0.6rem;">Photography Checklist:</h5>
+          <ul style="color: var(--text-dim); font-size: 0.85rem; padding-left: 1.2rem; line-height: 1.6;">
+            <li data-i18n="tip1">Scan only supported crops: Corn (Maize), Potato, Tomato.</li>
+            <li data-i18n="tip2">Hold camera 10–20 cm away with good daylight.</li>
+            <li data-i18n="tip3">Avoid fingers, people, backgrounds, or blurry shots.</li>
+          </ul>
+        </div>
+
+        <button class="btn-primary" onclick="App.openCameraView()">
+          📸 Try Scanning Again
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 6: HISTORY & PENDING OUTBOX           -->
+    <!-- ========================================== -->
+    <section id="view-history" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="color: #fff; font-size: 1.25rem; font-weight: 800;" data-i18n="recentScans">Field Scan History</h3>
+        <button class="btn-secondary" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="SyncService.syncOutboxNow()" data-i18n="syncNow">
+          Sync Outbox
+        </button>
+      </div>
+
+      <div id="historyListContainer">
+        <!-- Rendered via App.renderHistory() -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 7: SETTINGS & ACCOUNT                 -->
+    <!-- ========================================== -->
+    <section id="view-settings" class="view-section">
+      <!-- Account Profile / Login Box -->
+      <div class="card" style="margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+          <h4 style="color: #fff; font-size: 1.05rem; font-weight: 800;">Account & Cloud Sync</h4>
+          <span id="settingsRoleBadge" style="background: rgba(0,255,136,0.12); color: var(--primary); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 100px; text-transform: uppercase;">
+            Guest
+          </span>
+        </div>
+
+        <div id="settingsUserBox" style="margin-bottom: 1rem;">
+          <p id="settingsUserDesc" style="color: var(--text-dim); font-size: 0.88rem; line-height: 1.5;">
+            Browsing as a guest. All scans are saved locally on this phone.
+          </p>
+        </div>
+
+        <div id="settingsAuthActionBtn">
+          <button class="btn-primary" onclick="App.openAuthView('login')">
+            🔑 Log In / Create Account
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="color: #fff; font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;" data-i18n="settings">
+          Preferences & Tools
+        </h3>
+
+        <div style="margin-bottom: 1.2rem;">
+          <label style="font-size: 0.75rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 0.4rem;" data-i18n="selectLanguage">
+            Language
+          </label>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-secondary" onclick="I18N.setLanguage('en')">English</button>
+            <button class="btn-secondary" onclick="I18N.setLanguage('hi')">हिंदी</button>
+            <button class="btn-secondary" onclick="I18N.setLanguage('gu')">ગુજરાતી</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.2rem;">
+          <button class="btn-secondary" onclick="SyncService.syncOutboxNow()" data-i18n="syncNow">
+            🔄 Manual Outbox Sync
+          </button>
+        </div>
+
+        <div style="border-top: 1px solid var(--surface-border); padding-top: 1rem; margin-bottom: 1.2rem;">
+          <h5 style="color: #fff; font-size: 0.9rem; margin-bottom: 0.3rem;">Kisan Support Helpline</h5>
+          <p style="color: var(--primary); font-size: 0.92rem; font-weight: 700;" data-i18n="helpline">
+            Kisan Call Center: 1800-180-1551
+          </p>
+        </div>
+
+        <button class="btn-secondary" onclick="if(confirm('Clear all local scans on this device?')){AppDB.clearAll().then(() => App.renderHistory());}" style="color: var(--danger); border-color: rgba(248,113,113,0.3);">
+          🗑️ Clear Local History
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 8: LOGIN / SIGNUP VIEW                -->
+    <!-- ========================================== -->
+    <section id="view-auth" class="view-section">
+      <div class="card" style="padding: 1.5rem;">
+        <!-- Tab selector -->
+        <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.05); padding: 0.25rem; border-radius: 12px; margin-bottom: 1.5rem;">
+          <button id="authTabLogin" class="btn-secondary" style="flex: 1; border: none; background: var(--primary); color: #000; font-weight: 800;" onclick="App.switchAuthTab('login')">
+            Log In
+          </button>
+          <button id="authTabSignup" class="btn-secondary" style="flex: 1; border: none; background: transparent; color: var(--text-dim);" onclick="App.switchAuthTab('signup')">
+            Sign Up
+          </button>
+        </div>
+
+        <!-- Offline notice hint -->
+        <div id="authOfflineNotice" style="display: none; background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 0.65rem 0.9rem; font-size: 0.8rem; color: var(--warning); margin-bottom: 1.2rem;">
+          ⚠️ Device is offline. Internet is needed once to authenticate. You can continue scanning as Guest.
+        </div>
+
+        <!-- Login Form -->
+        <div id="authLoginForm">
+          <div class="form-group">
+            <label class="form-label">Mobile Number or Email</label>
+            <input type="text" id="loginIdInput" class="form-input" placeholder="e.g. 9876543210 or ramesh@kisan.in">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="loginPasswordInput" class="form-input" placeholder="Enter password (e.g. farmer123)">
+          </div>
+          <button class="btn-primary" style="margin-top: 1.2rem; margin-bottom: 0.8rem;" onclick="App.handleLogin()">
+            Sign In
+          </button>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="authSignupForm" style="display: none;">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="signupNameInput" class="form-input" placeholder="e.g. Ramesh Patel">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mobile Number or Email</label>
+            <input type="text" id="signupLoginIdInput" class="form-input" placeholder="10-digit mobile or email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="signupPasswordInput" class="form-input" placeholder="Minimum 6 characters">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Preferred Advisory Language</label>
+            <select id="signupLangSelect" class="form-input" style="background: #10141f;">
+              <option value="en">English</option>
+              <option value="hi">हिंदी (Hindi)</option>
+              <option value="gu">ગુજરાતી (Gujarati)</option>
+            </select>
+          </div>
+          <button class="btn-primary" style="margin-top: 1.2rem; margin-bottom: 0.8rem;" onclick="App.handleSignup()">
+            Create Account
+          </button>
+        </div>
+
+        <button class="btn-secondary" onclick="App.showView('view-home')">
+          ← Back to Scanner
+        </button>
+      </div>
+    </section>
+
+    <!-- Scan Spinner Overlay -->
+    <div id="scanSpinner" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;">
+      <div style="width: 44px; height: 44px; border: 4px solid rgba(0,255,136,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+      <div style="color: var(--primary); font-weight: 800; font-size: 1rem;">Analyzing Leaf with Edge AI...</div>
+    </div>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+
+  </main>
+
+  <!-- Bottom App Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-tab active" data-view="view-home">
+      <span style="font-size: 1.25rem;">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="nav-tab" data-view="view-capture" onclick="App.openCameraView()">
+      <span style="font-size: 1.25rem;">📸</span>
+      <span>Scan</span>
+    </button>
+    <button class="nav-tab" data-view="view-history">
+      <span style="font-size: 1.25rem;">🕒</span>
+      <span>History</span>
+    </button>
+    <button class="nav-tab" data-view="view-settings">
+      <span style="font-size: 1.25rem;">⚙️</span>
+      <span>Settings</span>
+    </button>
+  </nav>
+
+  <!-- Bundled Zero-CDN Scripts -->
+  <script src="vendor/ort.min.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/sync_service.js"></script>
+  <script src="js/model_service.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
