@@ -1,46 +1,134 @@
 {% extends 'base.html' %}
 
-{% block title %}My Scans | AgriScan{% endblock %}
+{% block title %}My Field Scans | AgriScan{% endblock %}
 
 {% block content %}
-<div class="animate-up" style="max-width: 1050px; margin: 0 auto;">
-    <!-- Header banner -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem;">
+<div class="animate-up" style="max-width: 1200px; margin: 0 auto;">
+
+    <!-- ======================================================== -->
+    <!-- 1. HEADER SECTION & WELCOME BANNER                       -->
+    <!-- ======================================================== -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1.5rem;">
         <div>
             <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.25); padding: 0.35rem 0.9rem; border-radius: 100px; color: var(--primary); font-size: 0.82rem; font-weight: 700; margin-bottom: 0.8rem;">
-                <i data-lucide="user-check" style="width: 14px;"></i> {{ request.session.user.name|default:"Farmer" }}'s Dashboard
+                <i data-lucide="user-check" style="width: 14px;"></i> {{ request.session.user.name|default:"Farmer" }}'s Field Diagnostics
             </div>
-            <h1 style="font-size: 2.6rem; font-weight: 800; color: #fff; letter-spacing: -1px; margin: 0;">
-                My Field <span style="color: var(--primary);">Scans</span>
+            <h1 style="font-size: 2.7rem; font-weight: 800; color: #fff; letter-spacing: -1.5px; margin: 0; line-height: 1.15;">
+                {{ t.my_scans_title|default:"My Field Scans & Crop Health" }}
             </h1>
-            <p style="color: var(--text-dim); font-size: 1.05rem; margin-top: 0.4rem;">
-                Perform offline AI disease diagnosis and review historical crop health records.
+            <p style="color: var(--text-dim); font-size: 1.05rem; margin-top: 0.5rem; max-width: 650px;">
+                {{ t.my_scans_subtitle|default:"Perform real-time crop disease diagnostics, review historical health records, and access verified agronomic treatments." }}
             </p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.8rem;">
-            <!-- Language Selector Pills -->
-            <button class="lang-pill active" onclick="setLanguage('en')">English</button>
-            <button class="lang-pill" onclick="setLanguage('hi')">हिंदी (Hindi)</button>
-            <button class="lang-pill" onclick="setLanguage('gu')">ગુજરાતી (Gujarati)</button>
+        <!-- Language Switcher Chips for Diagnosis Audio & Text -->
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+            <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Advisory Language</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.04); padding: 0.3rem; border-radius: 50px; border: 1px solid var(--surface-border);">
+                <button class="lang-pill active" onclick="setLanguage('en')">English</button>
+                <button class="lang-pill" onclick="setLanguage('hi')">हिंदी</button>
+                <button class="lang-pill" onclick="setLanguage('gu')">ગુજરાતી</button>
+            </div>
         </div>
     </div>
 
     <!-- ======================================================== -->
-    <!-- 🌿 LIVE ON-DEVICE AI CROP DISEASE SCANNER               -->
+    <!-- 2. INFORMATIVE KPI SUMMARY MATRIX                         -->
+    <!-- ======================================================== -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin-bottom: 2.5rem;">
+        <!-- Card 1: Total Scans -->
+        <div class="glass-card" style="padding: 1.4rem 1.6rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(0, 255, 136, 0.15);">
+            <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.25); width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
+                <i data-lucide="scan-line" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div>
+                <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Total Field Scans</span>
+                <h3 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0.1rem 0 0;">{{ scans|length|default:"0" }}</h3>
+            </div>
+        </div>
+
+        <!-- Card 2: Diseased Plants Detected -->
+        <div class="glass-card" style="padding: 1.4rem 1.6rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(248, 113, 113, 0.15);">
+            <div style="background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.25); width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #f87171; flex-shrink: 0;">
+                <i data-lucide="alert-triangle" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div>
+                <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Issues Requiring Care</span>
+                <h3 id="statDiseasedCount" style="font-size: 1.8rem; font-weight: 800; color: #f87171; margin: 0.1rem 0 0;">
+                    --
+                </h3>
+            </div>
+        </div>
+
+        <!-- Card 3: Healthy Foliage -->
+        <div class="glass-card" style="padding: 1.4rem 1.6rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(5, 150, 105, 0.15);">
+            <div style="background: rgba(5, 150, 105, 0.1); border: 1px solid rgba(5, 150, 105, 0.25); width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #34d399; flex-shrink: 0;">
+                <i data-lucide="shield-check" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div>
+                <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Healthy Crops</span>
+                <h3 id="statHealthyCount" style="font-size: 1.8rem; font-weight: 800; color: #34d399; margin: 0.1rem 0 0;">
+                    --
+                </h3>
+            </div>
+        </div>
+
+        <!-- Card 4: AI Diagnostic Model -->
+        <div class="glass-card" style="padding: 1.4rem 1.6rem; display: flex; align-items: center; gap: 1.2rem; border-color: rgba(96, 165, 250, 0.15);">
+            <div style="background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96, 165, 250, 0.25); width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #60a5fa; flex-shrink: 0;">
+                <i data-lucide="cpu" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div>
+                <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Edge AI Engine</span>
+                <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0.2rem 0 0;">MobileNetV2</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 3. HOW IT WORKS: QUICK 3-STEP GUIDE                       -->
+    <!-- ======================================================== -->
+    <div class="glass-card" style="padding: 1.5rem 2rem; margin-bottom: 2.5rem; background: linear-gradient(135deg, rgba(0, 255, 136, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="background: rgba(0, 255, 136, 0.15); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; font-size: 0.95rem;">1</div>
+                <div>
+                    <h4 style="margin: 0; color: #fff; font-size: 0.95rem; font-weight: 700;">Capture or Upload</h4>
+                    <p style="margin: 0; color: var(--text-dim); font-size: 0.8rem;">Snap a clear, well-lit photo of the crop leaf</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="background: rgba(96, 165, 250, 0.15); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #60a5fa; font-weight: 800; font-size: 0.95rem;">2</div>
+                <div>
+                    <h4 style="margin: 0; color: #fff; font-size: 0.95rem; font-weight: 700;">Instant Edge AI Analysis</h4>
+                    <p style="margin: 0; color: var(--text-dim); font-size: 0.8rem;">Detects symptoms and disease pathogen</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="background: rgba(251, 191, 36, 0.15); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fbbf24; font-weight: 800; font-size: 0.95rem;">3</div>
+                <div>
+                    <h4 style="margin: 0; color: #fff; font-size: 0.95rem; font-weight: 700;">Prescribed Treatment</h4>
+                    <p style="margin: 0; color: var(--text-dim); font-size: 0.8rem;">Get chemical dosage, organic cure & audio</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 4. LIVE LEAF DIAGNOSIS TOOL                               -->
     <!-- ======================================================== -->
     <div class="glass-card" style="padding: 2.5rem; margin-bottom: 3.5rem; border: 1px solid rgba(0, 255, 136, 0.25);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
             <div>
-                <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 0;">
-                    📸 New Leaf Diagnosis
+                <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 0.6rem;">
+                    <i data-lucide="camera" style="width: 24px; color: var(--primary);"></i> {{ t.scan_new_leaf|default:"New Leaf Diagnosis" }}
                 </h2>
-                <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 0.2rem;">
-                    Dual-Backbone AI Ensemble (MobileNetV2 + EfficientNet-B0) • Works 100% Offline
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 0.3rem;">
+                    Upload or snap a photo of any suspect crop leaf for immediate evaluation.
                 </p>
             </div>
-            <span style="background: rgba(0, 255, 136, 0.12); color: var(--primary); padding: 0.35rem 0.85rem; border-radius: 8px; font-size: 0.8rem; font-weight: 800; border: 1px solid rgba(0, 255, 136, 0.3);">
-                ⚡ 25ms Edge Inference
+            <span style="background: rgba(0, 255, 136, 0.12); color: var(--primary); padding: 0.4rem 0.9rem; border-radius: 8px; font-size: 0.82rem; font-weight: 800; border: 1px solid rgba(0, 255, 136, 0.3); display: inline-flex; align-items: center; gap: 0.4rem;">
+                <i data-lucide="zap" style="width: 14px;"></i> Instant AI Inference
             </span>
         </div>
 
@@ -49,29 +137,29 @@
             <input type="file" id="leafFile" accept="image/*" capture="environment" style="display: none;" onchange="handleImageSelected(this.files[0])">
             
             <div id="uploadPrompt">
-                <div style="width: 76px; height: 76px; margin: 0 auto 1.2rem; border-radius: 50%; background: rgba(0, 255, 136, 0.1); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 255, 136, 0.3);">
-                    <i data-lucide="camera" style="width: 38px; height: 38px; color: var(--primary);"></i>
+                <div style="width: 80px; height: 80px; margin: 0 auto 1.2rem; border-radius: 50%; background: rgba(0, 255, 136, 0.1); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 255, 136, 0.3);">
+                    <i data-lucide="camera" style="width: 40px; height: 40px; color: var(--primary);"></i>
                 </div>
-                <h3 style="font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.4rem;">
+                <h3 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.4rem;">
                     Snap or Upload Leaf Photo
                 </h3>
-                <p style="color: var(--text-dim); font-size: 0.92rem; margin-bottom: 1.3rem;">
-                    Supports camera capture or gallery image (JPEG, PNG). Runs offline in ~25ms.
+                <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1.4rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                    Supports high-resolution camera capture or gallery upload (JPEG, PNG). Runs with offline acceleration.
                 </p>
                 <button type="button" class="btn-app" style="margin: 0 auto;" onclick="event.stopPropagation(); document.getElementById('leafFile').click();">
-                    <i data-lucide="upload" style="width: 16px;"></i> Select Leaf Image
+                    <i data-lucide="upload" style="width: 16px;"></i> Choose Leaf Image
                 </button>
             </div>
 
             <!-- Image Preview Area -->
             <div id="previewArea" style="display: none;">
-                <img id="previewImg" src="" alt="Leaf Preview" style="max-height: 260px; border-radius: 16px; border: 1px solid var(--surface-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 1.5rem;">
-                <div>
-                    <button type="button" class="btn-app" style="background: var(--surface-border); color: #fff; margin-right: 0.8rem;" onclick="event.stopPropagation(); resetScanner();">
+                <img id="previewImg" src="" alt="Leaf Preview" style="max-height: 280px; border-radius: 16px; border: 1px solid var(--surface-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <button type="button" class="btn-app" style="background: var(--surface-border); color: #fff;" onclick="event.stopPropagation(); resetScanner();">
                         <i data-lucide="refresh-cw" style="width: 16px;"></i> Retake Photo
                     </button>
                     <button type="button" id="analyzeBtn" class="btn-app" style="background: var(--primary); color: #000; font-weight: 800;" onclick="event.stopPropagation(); runDiagnosis();">
-                        <i data-lucide="scan" style="width: 16px;"></i> Run Edge AI Diagnosis
+                        <i data-lucide="scan" style="width: 16px;"></i> Diagnose Leaf Now
                     </button>
                 </div>
             </div>
@@ -79,9 +167,9 @@
 
         <!-- Processing Status Bar -->
         <div id="statusIndicator" style="display: none; margin-top: 1.5rem; text-align: center; color: var(--primary); font-weight: 600;">
-            <div style="display: inline-flex; align-items: center; gap: 0.6rem;">
+            <div style="display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(0, 255, 136, 0.08); padding: 0.6rem 1.4rem; border-radius: 50px; border: 1px solid rgba(0, 255, 136, 0.2);">
                 <span class="pulse-dot"></span>
-                <span id="statusText">Running Dual-Backbone (MobileNetV2 + EfficientNet-B0) Inference...</span>
+                <span id="statusText">Analyzing leaf symptoms with crop disease model...</span>
             </div>
         </div>
 
@@ -92,7 +180,7 @@
                     <span id="resCropBadge" style="background: rgba(255,255,255,0.06); color: var(--text-dim); padding: 0.3rem 0.8rem; border-radius: 8px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid var(--surface-border);">
                         Crop Name
                     </span>
-                    <h2 id="resDiseaseTitle" style="font-size: 2.2rem; font-weight: 800; color: #ff5555; margin: 0.6rem 0 0.2rem; letter-spacing: -1px;">
+                    <h2 id="resDiseaseTitle" style="font-size: 2.3rem; font-weight: 800; color: #ff5555; margin: 0.6rem 0 0.2rem; letter-spacing: -1px;">
                         Disease Detected
                     </h2>
                     <div id="resScientificKey" style="color: var(--text-dim); font-size: 0.9rem; font-style: italic;">
@@ -100,14 +188,14 @@
                     </div>
                 </div>
 
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
-                    <div id="resConfidence" style="background: rgba(0, 255, 136, 0.15); color: var(--primary); font-size: 1.2rem; font-weight: 900; padding: 0.5rem 1.2rem; border-radius: 12px; border: 1px solid rgba(0, 255, 136, 0.4);">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem;">
+                    <div id="resConfidence" style="background: rgba(0, 255, 136, 0.15); color: var(--primary); font-size: 1.25rem; font-weight: 900; padding: 0.5rem 1.3rem; border-radius: 12px; border: 1px solid rgba(0, 255, 136, 0.4);">
                         98.5% Match
                     </div>
                     <!-- Audio Playback Button -->
                     <button id="audioPlayBtn" class="btn-app" style="background: rgba(255,255,255,0.08); color: #fff; padding: 0.5rem 1rem;" onclick="playVoiceAdvisory()">
                         <i data-lucide="volume-2" style="width: 17px; color: var(--primary);"></i>
-                        <span id="audioBtnText">🔊 Listen Audio Advisory</span>
+                        <span id="audioBtnText">🔊 Listen Spoken Guidance</span>
                     </button>
                 </div>
             </div>
@@ -115,40 +203,40 @@
             <audio id="advisoryAudio" style="display: none;"></audio>
 
             <!-- Detailed Treatment Grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                 
-                <!-- Symptoms Card -->
-                <div style="background: rgba(255, 255, 255, 0.02); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--surface-border);">
+                <!-- Visual Symptoms Card -->
+                <div style="background: rgba(255, 255, 255, 0.02); padding: 1.6rem; border-radius: 16px; border: 1px solid var(--surface-border);">
                     <div style="color: #fbbf24; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i data-lucide="eye" style="width: 16px;"></i> <span id="labelSymptoms">Visual Symptoms</span>
+                        <i data-lucide="eye" style="width: 16px;"></i> <span id="labelSymptoms">{{ t.symptoms|default:"Visual Symptoms" }}</span>
                     </div>
-                    <p id="resSymptoms" style="color: var(--text-dim); font-size: 0.98rem; line-height: 1.6; margin: 0;">
+                    <p id="resSymptoms" style="color: var(--text-dim); font-size: 0.98rem; line-height: 1.65; margin: 0;">
                         --
                     </p>
                 </div>
 
-                <!-- Organic Prevention -->
-                <div style="background: rgba(255, 255, 255, 0.02); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--surface-border);">
+                <!-- Organic & Preventive Cure -->
+                <div style="background: rgba(255, 255, 255, 0.02); padding: 1.6rem; border-radius: 16px; border: 1px solid var(--surface-border);">
                     <div style="color: var(--primary); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i data-lucide="shield" style="width: 16px;"></i> <span id="labelPrevention">Organic & Preventive Cure</span>
+                        <i data-lucide="shield" style="width: 16px;"></i> <span id="labelPrevention">{{ t.prevention|default:"Organic Prevention" }}</span>
                     </div>
-                    <p id="resPrevention" style="color: var(--text-dim); font-size: 0.98rem; line-height: 1.6; margin: 0;">
+                    <p id="resPrevention" style="color: var(--text-dim); font-size: 0.98rem; line-height: 1.65; margin: 0;">
                         --
                     </p>
                 </div>
 
                 <!-- Chemical Treatment & Dosage -->
-                <div style="background: rgba(255, 255, 255, 0.02); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--surface-border); grid-column: 1 / -1;">
+                <div style="background: rgba(255, 255, 255, 0.02); padding: 1.6rem; border-radius: 16px; border: 1px solid var(--surface-border); grid-column: 1 / -1;">
                     <div style="color: #60a5fa; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i data-lucide="flask-conical" style="width: 16px;"></i> <span id="labelTreatment">Chemical Action & Dosage</span>
+                        <i data-lucide="flask-conical" style="width: 16px;"></i> <span id="labelTreatment">{{ t.treatment|default:"Prescribed Chemical Dosage" }}</span>
                     </div>
-                    <p id="resTreatment" style="color: var(--text-main); font-size: 1.05rem; font-weight: 600; line-height: 1.6; margin-bottom: 1rem;">
+                    <p id="resTreatment" style="color: var(--text-main); font-size: 1.05rem; font-weight: 600; line-height: 1.65; margin-bottom: 1.2rem;">
                         --
                     </p>
 
-                    <!-- Recommended Active Chemical Pills -->
+                    <!-- Recommended Active Chemical Molecules -->
                     <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.85rem; color: var(--text-dim); font-weight: 700;">Verified Active Ingredients:</span>
+                        <span style="font-size: 0.85rem; color: var(--text-dim); font-weight: 700;">Active Formulations:</span>
                         <div id="resTechnicals" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                             <!-- Technical Badges injected via JS -->
                         </div>
@@ -159,54 +247,69 @@
             <!-- Safety Warning Note -->
             <div id="safetyBanner" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 1rem 1.4rem; display: flex; align-items: center; gap: 0.8rem; color: #fca5a5; font-size: 0.92rem;">
                 <i data-lucide="alert-triangle" style="width: 20px; color: #ef4444; flex-shrink: 0;"></i>
-                <span id="resSafety">Always wear protective gloves and mask during spray application.</span>
+                <span id="resSafety">Always wear protective gloves and face mask during chemical spraying.</span>
             </div>
 
             <!-- Action Links -->
             <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
                 <a id="compareLink" href="{% url 'compare_products' %}" class="btn-app" style="background: rgba(0, 255, 136, 0.15); color: var(--primary); border: 1px solid rgba(0, 255, 136, 0.3);">
-                    <i data-lucide="shopping-cart" style="width: 16px;"></i> Compare Market Product Prices
+                    <i data-lucide="shopping-cart" style="width: 16px;"></i> Compare Market Input Prices
                 </a>
             </div>
         </div>
     </div>
 
     <!-- ======================================================== -->
-    <!-- 📋 HISTORICAL SCANS LOG                                   -->
+    <!-- 5. HISTORICAL SCANS LOG & SEARCH FILTERS                 -->
     <!-- ======================================================== -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.6rem; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 0.6rem;">
-            <i data-lucide="history" style="width: 22px; color: var(--primary);"></i> Past Field Scans
-        </h2>
-        {% if scans %}
-            <span style="color: var(--text-dim); font-size: 0.9rem; font-weight: 600;">
-                Showing {{ scans|length }} records
-            </span>
-        {% endif %}
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h2 style="font-size: 1.7rem; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 0.6rem;">
+                <i data-lucide="history" style="width: 22px; color: var(--primary);"></i> Past Field Scans Log
+            </h2>
+            <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 0.2rem;">
+                Complete record of past diagnoses and treatment progress for your fields.
+            </p>
+        </div>
+
+        <!-- Filter Controls -->
+        <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--surface-border); border-radius: 10px; padding: 0.2rem; display: flex; gap: 0.3rem;">
+                <button class="filter-tab-btn active" onclick="filterScans('all')">All</button>
+                <button class="filter-tab-btn" onclick="filterScans('high')">⚠️ High Risk</button>
+                <button class="filter-tab-btn" onclick="filterScans('medium')">Moderate</button>
+                <button class="filter-tab-btn" onclick="filterScans('healthy')">🌱 Healthy</button>
+            </div>
+            {% if scans %}
+                <span style="color: var(--primary); font-size: 0.85rem; font-weight: 700; background: rgba(0, 255, 136, 0.1); padding: 0.35rem 0.8rem; border-radius: 8px;">
+                    {{ scans|length }} Records
+                </span>
+            {% endif %}
+        </div>
     </div>
 
     {% if scans %}
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem;">
+        <div id="scansContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
             {% for scan in scans %}
-                <div class="glass-card" style="padding: 1.8rem; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="glass-card scan-record-card" data-severity="{{ scan.severity|default:'medium' }}" style="padding: 1.8rem; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease;">
                     <div>
                         <!-- Header: Crop + Severity + Confidence -->
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                            <span style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255, 255, 255, 0.06); padding: 0.25rem 0.65rem; border-radius: 6px; color: #cbd5e1;">
-                                {{ scan.class_key|slice:":10" }}
+                            <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255, 255, 255, 0.06); padding: 0.3rem 0.7rem; border-radius: 8px; color: #cbd5e1; border: 1px solid var(--surface-border);">
+                                <i data-lucide="leaf" style="width: 12px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> {{ scan.class_key|slice:":12" }}
                             </span>
 
                             <div style="display: flex; gap: 0.5rem; align-items: center;">
                                 {% if scan.severity == 'high' %}
-                                    <span style="background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase;">
+                                    <span style="background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 50px; text-transform: uppercase;">
                                         High Risk
                                     </span>
                                 {% elif scan.severity == 'medium' %}
-                                    <span style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase;">
+                                    <span style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 50px; text-transform: uppercase;">
                                         Moderate
                                     </span>
                                 {% else %}
-                                    <span style="background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase;">
+                                    <span style="background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.3); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 50px; text-transform: uppercase;">
                                         Healthy
                                     </span>
                                 {% endif %}
@@ -221,7 +324,7 @@
                         <!-- Confidence Bar -->
                         <div style="margin: 1rem 0 1.2rem;">
                             <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem;">
-                                <span style="color: var(--text-dim);">Diagnosis Confidence</span>
+                                <span style="color: var(--text-dim);">Diagnostic Confidence</span>
                                 <span style="color: var(--primary);">{{ scan.confidence|floatformat:1 }}%</span>
                             </div>
                             <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 10px; overflow: hidden;">
@@ -239,7 +342,7 @@
                             {% endif %}
                             <div style="display: flex; align-items: center; gap: 0.4rem;">
                                 <i data-lucide="calendar" style="width: 14px;"></i>
-                                <span>Scanned on {{ scan.scanned_at }}</span>
+                                <span>{{ scan.scanned_at }}</span>
                             </div>
                         </div>
 
@@ -247,11 +350,11 @@
                         {% if scan.recommended_technical_names %}
                             <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
                                 <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px; margin-bottom: 0.4rem;">
-                                    Recommended Treatment
+                                    Recommended Action
                                 </div>
                                 <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
                                     {% for tech in scan.recommended_technical_names %}
-                                        <a href="{% url 'compare_products' %}?technical={{ tech|urlencode }}" style="font-size: 0.78rem; background: rgba(0, 255, 136, 0.1); color: var(--primary); text-decoration: none; padding: 0.2rem 0.5rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                        <a href="{% url 'compare_products' %}?technical={{ tech|urlencode }}" style="font-size: 0.78rem; background: rgba(0, 255, 136, 0.1); color: var(--primary); text-decoration: none; padding: 0.25rem 0.55rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s;">
                                             <i data-lucide="shopping-bag" style="width: 12px;"></i> {{ tech }} &rarr;
                                         </a>
                                     {% endfor %}
@@ -262,19 +365,23 @@
 
                     <!-- Footer: Sync Confirmation -->
                     <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--surface-border); font-size: 0.75rem; color: var(--text-dim);">
-                        <span style="display: flex; align-items: center; gap: 0.3rem; color: #10b981;">
-                            <i data-lucide="cloud-check" style="width: 14px;"></i> Synced to Cloud
+                        <span style="display: flex; align-items: center; gap: 0.35rem; color: #10b981; font-weight: 600;">
+                            <i data-lucide="check-circle-2" style="width: 14px;"></i> Verified Record
                         </span>
-                        <span style="font-family: monospace;">UUID: {{ scan.client_uuid|truncatechars:12 }}</span>
+                        <span style="font-family: monospace; font-size: 0.72rem; opacity: 0.7;">UUID: {{ scan.client_uuid|truncatechars:12 }}</span>
                     </div>
                 </div>
             {% endfor %}
         </div>
     {% else %}
         <!-- Empty State -->
-        <div class="glass-card" style="padding: 2.5rem; text-align: center; border-radius: 20px;">
-            <p style="color: var(--text-dim); font-size: 0.95rem; margin: 0;">
-                No historical scans saved yet. Use the <strong>New Leaf Diagnosis</strong> tool above to snap and diagnose a crop leaf!
+        <div class="glass-card" style="padding: 3.5rem 2rem; text-align: center; border-radius: 20px;">
+            <div style="width: 64px; height: 64px; background: rgba(0, 255, 136, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); margin: 0 auto 1.5rem;">
+                <i data-lucide="camera" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">No Past Scans Found</h3>
+            <p style="color: var(--text-dim); font-size: 0.95rem; max-width: 480px; margin: 0 auto 1.5rem;">
+                You haven't recorded any field scans yet. Use the <strong>Snap or Upload Leaf Photo</strong> tool above to perform your first plant diagnosis!
             </p>
         </div>
     {% endif %}
@@ -282,22 +389,41 @@
 
 <style>
 .lang-pill {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--surface-border);
+    background: transparent;
+    border: none;
     color: var(--text-dim);
-    padding: 0.45rem 1.2rem;
+    padding: 0.4rem 1rem;
     border-radius: 99px;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s;
 }
 .lang-pill:hover, .lang-pill.active {
     background: var(--primary);
     color: #07090e;
-    border-color: var(--primary);
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.35);
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
 }
+
+.filter-tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 0.35rem 0.85rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.filter-tab-btn:hover {
+    color: #fff;
+}
+.filter-tab-btn.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
 .pulse-dot {
     width: 10px;
     height: 10px;
@@ -316,13 +442,35 @@
 <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
 
 <script>
-let currentLanguage = 'en';
+let currentLanguage = '{{ current_lang|default:"en" }}';
 let advisoryData = null;
 let labelsList = [];
 let ortSession = null;
 let currentDiagnosisKey = null;
 
+// Tally up KPI statistics
+function calculateStatistics() {
+    const cards = document.querySelectorAll('.scan-record-card');
+    let diseased = 0;
+    let healthy = 0;
+
+    cards.forEach(card => {
+        const sev = card.getAttribute('data-severity');
+        if (sev === 'healthy') {
+            healthy++;
+        } else {
+            diseased++;
+        }
+    });
+
+    const elDiseased = document.getElementById('statDiseasedCount');
+    const elHealthy = document.getElementById('statHealthyCount');
+    if (elDiseased) elDiseased.innerText = diseased;
+    if (elHealthy) elHealthy.innerText = healthy;
+}
+
 async function initEngine() {
+    calculateStatistics();
     try {
         const advRes = await fetch('/static/data/advisory.json');
         if (advRes.ok) advisoryData = await advRes.json();
@@ -337,6 +485,25 @@ async function initEngine() {
     }
 }
 window.addEventListener('DOMContentLoaded', initEngine);
+
+function filterScans(filterType) {
+    document.querySelectorAll('.filter-tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const cards = document.querySelectorAll('.scan-record-card');
+    cards.forEach(card => {
+        const sev = card.getAttribute('data-severity');
+        if (filterType === 'all') {
+            card.style.display = 'flex';
+        } else if (filterType === 'healthy') {
+            card.style.display = (sev === 'healthy') ? 'flex' : 'none';
+        } else if (filterType === 'high') {
+            card.style.display = (sev === 'high') ? 'flex' : 'none';
+        } else if (filterType === 'medium') {
+            card.style.display = (sev === 'medium') ? 'flex' : 'none';
+        }
+    });
+}
 
 function setLanguage(lang) {
     currentLanguage = lang;
