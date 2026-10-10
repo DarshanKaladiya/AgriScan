@@ -20,6 +20,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('my-scans/', views.my_scans, name='my_scans'),
     path('field-reports/', views.field_reports, name='field_reports'),
+    path('set-language/', views.set_language, name='set_language'),
 ]
 
 if settings.DEBUG:

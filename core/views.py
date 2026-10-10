@@ -333,3 +333,23 @@ def field_reports(request):
 def scanner_view(request):
     """Redirects to personal scanner hub with login protection."""
     return redirect("my_scans")
+
+
+def set_language(request):
+    """
+    Switches active interface language ('en', 'hi', 'gu').
+    Saves in session and cookie, then redirects back to previous page.
+    """
+    lang = request.GET.get('lang') or request.POST.get('lang') or 'en'
+    if lang not in ['en', 'hi', 'gu']:
+        lang = 'en'
+    
+    request.session['lang'] = lang
+    next_url = request.GET.get('next') or request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
+    
+    if not next_url.startswith('/') and not next_url.startswith('http://127.0.0.1') and not next_url.startswith('http://localhost'):
+        next_url = '/'
+        
+    response = redirect(next_url)
+    response.set_cookie('agri_lang', lang, max_age=30*24*3600)
+    return response

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AgriScan | Offline AI Crop Disease Diagnosis & Market Intelligence{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Gujarati:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
@@ -34,7 +34,7 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Noto Sans Gujarati', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
             color: var(--text-main);
             min-height: 100vh;
@@ -61,7 +61,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.1rem 7%;
+            padding: 0.9rem 4%;
+            gap: 1.5rem;
             background: rgba(7, 9, 14, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -72,7 +73,9 @@
         }
 
         .logo {
-            font-size: 1.55rem;
+            flex-shrink: 0;
+            white-space: nowrap;
+            font-size: 1.5rem;
             font-weight: 800;
             letter-spacing: -0.5px;
             display: flex;
@@ -103,7 +106,9 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 1.8rem;
+            gap: 1.4rem;
+            flex-wrap: nowrap;
+            flex-shrink: 0;
         }
 
         .nav-links a {
@@ -116,6 +121,9 @@
             align-items: center;
             gap: 0.45rem;
             position: relative;
+            white-space: nowrap; /* Prevents 2-line stacking in Gujarati & Hindi */
+            padding: 0.35rem 0.2rem;
+            line-height: 1.4;
         }
 
         .nav-links a:hover, .nav-links a.active {
@@ -152,7 +160,8 @@
             align-items: center;
             gap: 0.4rem;
             transition: color 0.25s;
-            padding: 0.4rem 0;
+            padding: 0.35rem 0.2rem;
+            white-space: nowrap;
         }
 
         .dropdown-btn:hover {
@@ -198,7 +207,45 @@
             display: none !important;
         }
 
+                /* Language Selector Pill */
+        .lang-selector-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--surface-border);
+            border-radius: 12px;
+            padding: 0.5rem 0.85rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .lang-selector-wrapper:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .lang-select {
+            background: transparent !important;
+            border: none !important;
+            color: var(--text-main) !important;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none !important;
+            padding: 0;
+            font-family: inherit;
+        }
+        .lang-select option {
+            background: #0d111a !important;
+            color: #f8fafc !important;
+            padding: 10px;
+        }
+
         .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+            white-space: nowrap;
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -489,16 +536,16 @@
 
         <div class="nav-links">
             <a href="{% url 'dashboard' %}" class="{% if request.path == '/' %}active{% endif %}">
-                <i data-lucide="layout-dashboard" style="width: 17px;"></i> Overview
+                <i data-lucide="layout-dashboard" style="width: 17px;"></i> {{ t.nav_dashboard|default:"Overview" }}
             </a>
             <a href="{% url 'my_scans' %}" class="{% if '/my-scans' in request.path or '/scanner' in request.path %}active{% endif %}">
-                <i data-lucide="scan-line" style="width: 17px;"></i> My Scans
+                <i data-lucide="scan-line" style="width: 17px;"></i> {{ t.nav_scans|default:"My Scans" }}
             </a>
             <a href="{% url 'crops_list' %}" class="{% if '/crop' in request.path %}active{% endif %}">
-                <i data-lucide="book-open" style="width: 17px;"></i> Crop Guide
+                <i data-lucide="book-open" style="width: 17px;"></i> {{ t.nav_crops|default:"Crop Guide" }}
             </a>
             <a href="{% url 'field_reports' %}" class="{% if '/field-reports' in request.path %}active{% endif %}">
-                <i data-lucide="radar" style="width: 17px;"></i> Field Reports
+                <i data-lucide="radar" style="width: 17px;"></i> {{ t.nav_reports|default:"Field Reports" }}
             </a>
 
             <!-- More Services Dropdown -->
@@ -507,14 +554,25 @@
                     <i data-lucide="layers" style="width: 17px;"></i> More <i data-lucide="chevron-down" style="width: 14px;"></i>
                 </button>
                 <div class="dropdown-content">
-                    <a href="{% url 'mandi_rates' %}"><i data-lucide="trending-up" style="width: 16px;"></i> Mandi Prices</a>
-                    <a href="{% url 'compare_products' %}"><i data-lucide="sliders" style="width: 16px;"></i> Product Insights</a>
-                    <a href="{% url 'partners_list' %}"><i data-lucide="building-2" style="width: 16px;"></i> Agri Networks</a>
+                    <a href="{% url 'mandi_rates' %}"><i data-lucide="trending-up" style="width: 16px;"></i> {{ t.nav_mandi|default:"Mandi Prices" }}</a>
+                    <a href="{% url 'compare_products' %}"><i data-lucide="sliders" style="width: 16px;"></i> {{ t.nav_compare|default:"Product Insights" }}</a>
+                    <a href="{% url 'partners_list' %}"><i data-lucide="building-2" style="width: 16px;"></i> {{ t.nav_companies|default:"Agri Networks" }}</a>
                 </div>
             </div>
         </div>
 
         <div class="nav-actions">
+            <!-- Language Selector Dropdown -->
+            <div class="lang-selector-wrapper" title="{{ t.language|default:'Language' }}">
+                <i data-lucide="languages" style="width: 16px; color: var(--primary);"></i>
+                <select id="languageSelect" onchange="window.location.href='{% url 'set_language' %}?lang=' + this.value + '&next=' + encodeURIComponent(window.location.pathname + window.location.search);" class="lang-select">
+                    {% for l in available_languages %}
+                    <option value="{{ l.code }}" {% if current_lang == l.code %}selected{% endif %}>
+                        {{ l.flag }} {{ l.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
             <!-- Get the App Trigger -->
             <button class="btn-app" onclick="openAppModal()">
                 <i data-lucide="smartphone" style="width: 16px;"></i> Get App
