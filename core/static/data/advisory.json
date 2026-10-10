@@ -1,0 +1,718 @@
+{
+  "Tomato___Early_blight": {
+    "class_key": "Tomato___Early_blight",
+    "audio": {
+      "en": "audio/en/tomato_early_blight.mp3",
+      "hi": "audio/hi/tomato_early_blight.mp3",
+      "gu": "audio/gu/tomato_early_blight.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Disease",
+    "name": {
+      "en": "Early Blight",
+      "hi": "अगेती झुलसा (टमाटर)",
+      "gu": "વહેલો સુકારો (ટામેટા)"
+    },
+    "prevention": {
+      "en": "Rotate crops every 2-3 years. Avoid wetting leaves.",
+      "hi": "2-3 साल में फसल चक्र अपनाएं।",
+      "gu": "પાકની ફેરબદલી કરો."
+    },
+    "recommended_technical_names": [
+      "Mancozeb 75% WP",
+      "Copper Oxychloride 50% WP"
+    ],
+    "safety_note": {
+      "en": "Wear gloves and face mask during spraying.",
+      "hi": "छिड़काव के समय दस्ताने और मास्क पहनें।",
+      "gu": "દવા છાંટતી વખતે હાથમોજાં અને માસ્ક પહેરો."
+    },
+    "severity": "medium",
+    "symptoms": {
+      "en": "Dark brown circular spots with concentric rings on older leaves.",
+      "hi": "निचली पत्तियों पर गोल छल्लेदार धब्बे।",
+      "gu": "નીચેના જૂના પાન પર કથ્થઈ ગોળ ટપકાં."
+    },
+    "treatment": {
+      "en": "Prune infected leaves. Spray Mancozeb 75% WP (2.5 g/L).",
+      "hi": "मैंकोजेब 75% WP (2.5 ग्राम/लीटर) का छिड़काव करें।",
+      "gu": "મેન્કોઝેબ ૭૫% WP નો છંટકાવ કરો."
+    }
+  },
+  "Tomato___Late_blight": {
+    "class_key": "Tomato___Late_blight",
+    "audio": {
+      "en": "audio/en/tomato_late_blight.mp3",
+      "hi": "audio/hi/tomato_late_blight.mp3",
+      "gu": "audio/gu/tomato_late_blight.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Disease",
+    "name": {
+      "en": "Late Blight",
+      "hi": "पछेती झुलसा (टमाटर)",
+      "gu": "મોડો સુકારો (ટામેટા)"
+    },
+    "prevention": {
+      "en": "Destroy cull piles, plant certified disease-free seedlings.",
+      "hi": "संक्रमित अवशेषों को नष्ट करें।",
+      "gu": "રોગિષ્ટ છોડના અવશેષોનો નાશ કરો."
+    },
+    "recommended_technical_names": [
+      "Metalaxyl 4% + Mancozeb 64% WP",
+      "Mancozeb 75% WP"
+    ],
+    "safety_note": {
+      "en": "Spreads rapidly in cool, humid weather.",
+      "hi": "ठंडे और नम मौसम में बहुत तेजी से फैलता है।",
+      "gu": "ભેજવાળા વાતાવરણમાં ખૂબ ઝડપથી ફેલાય છે."
+    },
+    "severity": "high",
+    "symptoms": {
+      "en": "Water-soaked lesions on leaves and stems with white fungal mold underneath.",
+      "hi": "पत्तियों और तनों पर पानी जैसे काले धब्बे।",
+      "gu": "પાન અને ડાળી પર કાળા પાણી જેવા ડાઘ."
+    },
+    "treatment": {
+      "en": "Spray Metalaxyl 4% + Mancozeb 64% WP (Ridomil Gold 2.5 g/L).",
+      "hi": "मेटालैक्सिल 4% + मैंकोजेब 64% WP का तुरंत छिड़काव करें।",
+      "gu": "મેટાલેક્સિલ ૪% + મેન્કોઝેબ ૬૪% WP નો છંટકાવ કરો."
+    }
+  },
+  "Tomato___Leaf_Mold": {
+    "class_key": "Tomato___Leaf_Mold",
+    "audio": {
+      "en": "audio/en/tomato_leaf_mold.mp3",
+      "hi": "audio/hi/tomato_leaf_mold.mp3",
+      "gu": "audio/gu/tomato_leaf_mold.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Disease",
+    "name": {
+      "en": "Leaf Mold",
+      "hi": "पत्ती का फफूंद रोग",
+      "gu": "પાનનો ફૂગ રોગ (મોલ્ડ)"
+    },
+    "prevention": {
+      "en": "Improve ventilation, avoid night irrigation.",
+      "hi": "हवा का संचार बढ़ाएं, रात में पानी न दें।",
+      "gu": "હવા-ઉજાસ રાખો, રાત્રે પાણી ન આપો."
+    },
+    "recommended_technical_names": [
+      "Carbendazim 12% + Mancozeb 63% WP"
+    ],
+    "safety_note": {
+      "en": "Do not inhale spray mist.",
+      "hi": "छिड़काव के समय मुंह ढंकें।",
+      "gu": "છંટકાવ વખતે મોં ઢાંકો."
+    },
+    "severity": "medium",
+    "symptoms": {
+      "en": "Pale green/yellow spots on upper leaf surfaces, olive green velvety mold underneath.",
+      "hi": "पत्ती पर हल्के पीले धब्बे और निचली सतह पर मखमली फफूंद।",
+      "gu": "પાન પર પીળા ડાઘ અને નીચે મખમલી ફૂગ."
+    },
+    "treatment": {
+      "en": "Spray Carbendazim 12% + Mancozeb 63% WP (2 g/L).",
+      "hi": "कार्बेंडाजिम + मैंकोजेब (2 ग्राम/लीटर) का छिड़काव करें।",
+      "gu": "કાર્બેન્ડાઝીમ + મેન્કોઝેબ (૨ ગ્રામ/લિટર) નો છંટકાવ કરો."
+    }
+  },
+  "Tomato___Septoria_leaf_spot": {
+    "class_key": "Tomato___Septoria_leaf_spot",
+    "audio": {
+      "en": "audio/en/tomato_septoria.mp3",
+      "hi": "audio/hi/tomato_septoria.mp3",
+      "gu": "audio/gu/tomato_septoria.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Disease",
+    "name": {
+      "en": "Septoria Leaf Spot",
+      "hi": "सेप्टोरिया पत्ती धब्बा",
+      "gu": "સેપ્ટોરિયા પાન ટપકાં"
+    },
+    "prevention": {
+      "en": "Mulch soil to prevent rain splash.",
+      "hi": "मल्चिंग करें ताकि मिट्टी न उड़े।",
+      "gu": "માટીના છાંટા રોકવા મલ્ચિંગ કરો."
+    },
+    "recommended_technical_names": [
+      "Mancozeb 75% WP"
+    ],
+    "safety_note": {
+      "en": "Ensure complete leaf coverage.",
+      "hi": "पत्तियों को दोनों तरफ से अच्छी तरह भिगोएं।",
+      "gu": "પાનની બંને બાજુ સરખો છંટકાવ કરો."
+    },
+    "severity": "medium",
+    "symptoms": {
+      "en": "Small circular spots with grayish-white centers and dark brown margins.",
+      "hi": "सफेद केंद्र वाले छोटे गोल धब्बे।",
+      "gu": "સફેદ કેન્દ્રવાળા નાના ગોળ ટપકાં."
+    },
+    "treatment": {
+      "en": "Spray Mancozeb 75% WP (2 g/L).",
+      "hi": "मैंकोजेब 75% WP का छिड़काव करें।",
+      "gu": "મેન્કોઝેબ ૭૫% WP નો છંટકાવ કરો."
+    }
+  },
+  "Tomato___Spider_mites_Two_spotted_spider_mite": {
+    "class_key": "Tomato___Spider_mites_Two_spotted_spider_mite",
+    "audio": {
+      "en": "audio/en/tomato_spider_mites.mp3",
+      "hi": "audio/hi/tomato_spider_mites.mp3",
+      "gu": "audio/gu/tomato_spider_mites.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Disease",
+    "name": {
+      "en": "Spider Mites (Pest)",
+      "hi": "लाल मकड़ी (कीट प्रकोप)",
+      "gu": "લાલ કથીરી (જીવાત ઉપદ્રવ)"
+    },
+    "prevention": {
+      "en": "Maintain soil moisture; avoid dry dusty conditions.",
+      "hi": "खेत में नमी रखें।",
+      "gu": "જમીનમાં ભેજ જાળવી રાખો."
+    },
+    "recommended_technical_names": [
+      "Imidacloprid 30.5% SC",
+      "Chlorantraniliprole 18.5% SC"
+    ],
+    "safety_note": {
+      "en": "Target undersides of leaves.",
+      "hi": "पत्ती के नीचे स्प्रे करें।",
+      "gu": "પાનની નીચે દવા પહોંચાડો."
+    },
+    "severity": "medium",
+    "symptoms": {
+      "en": "Yellow speckling on leaves, fine webbing under leaves, leaf bronzing.",
+      "hi": "पत्तियों पर बारीक पीले बिंदु और जाले।",
+      "gu": "પાન પર ઝીણા ટપકાં અને જાળી."
+    },
+    "treatment": {
+      "en": "Spray Imidacloprid 30.5% SC or Chlorantraniliprole 18.5% SC.",
+      "hi": "इमिडाक्लोप्रिड या कोराजन का छिड़काव करें।",
+      "gu": "ઇમિડાક્લોપ્રિડ અથવા કોરાજન છાંટો."
+    }
+  },
+  "Tomato___Target_Spot": {
+    "class_key": "Tomato___Target_Spot",
+    "audio": {
+      "en": "audio/en/tomato_target_spot.mp3",
+      "hi": "audio/hi/tomato_target_spot.mp3",
+      "gu": "audio/gu/tomato_target_spot.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Disease",
+    "name": {
+      "en": "Target Spot",
+      "hi": "टारगेट स्पॉट रोग",
+      "gu": "ટાર્ગેટ સ્પોટ"
+    },
+    "prevention": {
+      "en": "Prune foliage to improve airflow.",
+      "hi": "हवा-धूप के लिए छंटाई करें।",
+      "gu": "યોગ્ય હવા-ઉજાસ રાખો."
+    },
+    "recommended_technical_names": [
+      "Mancozeb 75% WP"
+    ],
+    "safety_note": {
+      "en": "Avoid excess overhead watering.",
+      "hi": "पत्तियों पर पानी न छिड़कें।",
+      "gu": "પાન પર પાણી ન છાંટો."
+    },
+    "severity": "medium",
+    "symptoms": {
+      "en": "Brown circular spots with concentric rings on leaves and sunken pits on fruit.",
+      "hi": "पत्तियों पर छल्लेदार गोल धब्बे।",
+      "gu": "પાન પર ગોળાકાર ડાઘ."
+    },
+    "treatment": {
+      "en": "Spray Mancozeb 75% WP (2.5 g/L).",
+      "hi": "मैंकोजेब 75% WP का छिड़काव करें।",
+      "gu": "મેન્કોઝેબ ૭૫% WP છાંટો."
+    }
+  },
+  "Tomato___Yellow_Leaf_Curl_Virus": {
+    "class_key": "Tomato___Yellow_Leaf_Curl_Virus",
+    "audio": {
+      "en": "audio/en/tomato_yellow_curl.mp3",
+      "hi": "audio/hi/tomato_yellow_curl.mp3",
+      "gu": "audio/gu/tomato_yellow_curl.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Disease",
+    "name": {
+      "en": "Yellow Leaf Curl Virus",
+      "hi": "पत्ती मरोड़ विषाणु",
+      "gu": "પાન વળવાનો વાયરસ (કોકડવા)"
+    },
+    "prevention": {
+      "en": "Control vector whiteflies using yellow sticky traps.",
+      "hi": "पीले स्टिकी ट्रैप से सफेद मक्खी रोकें।",
+      "gu": "પીળા સ્ટીકી ટ્રેપ લગાવો."
+    },
+    "recommended_technical_names": [
+      "Imidacloprid 30.5% SC"
+    ],
+    "safety_note": {
+      "en": "Virus is transmitted by whiteflies.",
+      "hi": "सफेद मक्खी द्वारा फैलता है।",
+      "gu": "સફેદ માખી દ્વારા ફેલાય છે."
+    },
+    "severity": "high",
+    "symptoms": {
+      "en": "Upward leaf curling, yellow leaf margins, stunted growth.",
+      "hi": "पत्तियां ऊपर की ओर मुड़ना और पौधा बौना रहना।",
+      "gu": "પાન ઉપર વળવા અને છોડ ઠિંગણો રહેવો."
+    },
+    "treatment": {
+      "en": "Uproot infected plants. Spray Imidacloprid 30.5% SC (0.3 ml/L) for whiteflies.",
+      "hi": "रोगग्रस्त पौधे उखाड़ें, सफेद मक्खी हेतु इमिडाक्लोप्रिड छिड़कें।",
+      "gu": "રોગિષ્ટ છોડ ઉપાડી લો, સફેદ માખી માટે ઇમિડાક્લોપ્રિડ છાંટો."
+    }
+  },
+  "Tomato___mosaic_virus": {
+    "class_key": "Tomato___mosaic_virus",
+    "audio": {
+      "en": "audio/en/tomato_mosaic.mp3",
+      "hi": "audio/hi/tomato_mosaic.mp3",
+      "gu": "audio/gu/tomato_mosaic.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Disease",
+    "name": {
+      "en": "Mosaic Virus",
+      "hi": "मोज़ेक वायरस",
+      "gu": "મોઝેક વાયરસ"
+    },
+    "prevention": {
+      "en": "Wash hands with soap before touching plants.",
+      "hi": "हाथों व औजारों को साबुन से धोएं।",
+      "gu": "હાથ અને ઓજારો સાબુથી સાફ કરો."
+    },
+    "recommended_technical_names": [],
+    "safety_note": {
+      "en": "Spreads easily by contact.",
+      "hi": "छूने से फैलता है।",
+      "gu": "સ્પર્શથી ફેલાય છે."
+    },
+    "severity": "high",
+    "symptoms": {
+      "en": "Mottled dark green and light yellow pattern on leaves.",
+      "hi": "पत्तियों पर हरे-पीले धब्बों का मोज़ेक पैटर्न।",
+      "gu": "પાન પર ઘાટા લીલા અને પીળા પટ્ટા."
+    },
+    "treatment": {
+      "en": "Remove infected plants. No chemical cure exists.",
+      "hi": "रोगग्रस्त पौधे हटाएं, कोई रासायनिक इलाज नहीं है।",
+      "gu": "રોગિષ્ટ છોડ ઉપાડી નાશ કરો."
+    }
+  },
+  "Tomato___healthy": {
+    "class_key": "Tomato___healthy",
+    "audio": {
+      "en": "audio/en/tomato_healthy.mp3",
+      "hi": "audio/hi/tomato_healthy.mp3",
+      "gu": "audio/gu/tomato_healthy.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Healthy",
+    "name": {
+      "en": "Tomato - Healthy",
+      "hi": "स्वस्थ टमाटर की पत्ती",
+      "gu": "તંદુરસ્ત ટામેટાંનું પાન"
+    },
+    "prevention": {
+      "en": "Maintain regular watering and nutrition with NPK 19:19:19.",
+      "hi": "संतुलित पोषण और सिंचाई जारी रखें।",
+      "gu": "નિયમિત પાણી અને NPK 19:19:19 ખાતર આપો."
+    },
+    "recommended_technical_names": [
+      "NPK 19:19:19"
+    ],
+    "safety_note": {
+      "en": "Continue routine weekly field inspection.",
+      "hi": "नियमित निरीक्षण जारी रखें।",
+      "gu": "નિયમિત તપાસ ચાલુ રાખો."
+    },
+    "severity": "none",
+    "symptoms": {
+      "en": "Vibrant green uniform leaves with no spots or curling.",
+      "hi": "पत्तियां पूरी तरह हरी और बेदाग हैं।",
+      "gu": "પાન તદ્દન લીલાંછમ અને ડાઘ વગરનાં છે."
+    },
+    "treatment": {
+      "en": "No pesticide needed.",
+      "hi": "किसी कीटनाशक की आवश्यकता नहीं है।",
+      "gu": "કોઈ દવાની જરૂર નથી."
+    }
+  },
+  "Potato___Early_blight": {
+    "class_key": "Potato___Early_blight",
+    "audio": {
+      "en": "audio/en/potato_early_blight.mp3",
+      "hi": "audio/hi/potato_early_blight.mp3",
+      "gu": "audio/gu/potato_early_blight.mp3"
+    },
+    "crop_id": 31,
+    "crop_name": "Potato",
+    "kind": "Disease",
+    "name": {
+      "en": "Potato Early Blight",
+      "hi": "आलू का अगेती झुलसा",
+      "gu": "બટાટાનો વહેલો સુકારો"
+    },
+    "prevention": {
+      "en": "Use certified seed tubers, avoid nitrogen deficiency.",
+      "hi": "प्रमाणित बीज का उपयोग करें।",
+      "gu": "પ્રમાણિત બિયારણ વાપરો."
+    },
+    "recommended_technical_names": [
+      "Mancozeb 75% WP",
+      "Carbendazim 12% + Mancozeb 63% WP"
+    ],
+    "safety_note": {
+      "en": "Spray before tuber initiation if blight occurred previously.",
+      "hi": "कंद बनने से पहले छिड़काव करें।",
+      "gu": "ગાંઠ બેસતા પહેલાં છંટકાવ કરો."
+    },
+    "severity": "medium",
+    "symptoms": {
+      "en": "Concentric rings forming brown target spots on lower leaves.",
+      "hi": "निचली पत्तियों पर छल्लेदार भूरे धब्बे।",
+      "gu": "નીચેના પાન પર ગોળ ચક્રાકાર ડાઘ."
+    },
+    "treatment": {
+      "en": "Spray Mancozeb 75% WP (2 g/L) or Carbendazim + Mancozeb.",
+      "hi": "मैंकोजेब 75% WP (2 ग्राम/लीटर) का छिड़काव करें।",
+      "gu": "મેન્કોઝેબ ૭૫% WP નો છંટકાવ કરો."
+    }
+  },
+  "Potato___Late_blight": {
+    "class_key": "Potato___Late_blight",
+    "audio": {
+      "en": "audio/en/potato_late_blight.mp3",
+      "hi": "audio/hi/potato_late_blight.mp3",
+      "gu": "audio/gu/potato_late_blight.mp3"
+    },
+    "crop_id": 31,
+    "crop_name": "Potato",
+    "kind": "Disease",
+    "name": {
+      "en": "Potato Late Blight",
+      "hi": "आलू का पछेती झुलसा",
+      "gu": "બટાટાનો મોડો સુકારો"
+    },
+    "prevention": {
+      "en": "Earth up soil well around tubers.",
+      "hi": "कंदों पर अच्छी तरह मिट्टी चढ़ाएं।",
+      "gu": "બટાટાની ગાંઠ પર માટી બરાબર ચડાવો."
+    },
+    "recommended_technical_names": [
+      "Metalaxyl 4% + Mancozeb 64% WP"
+    ],
+    "safety_note": {
+      "en": "Destroys potato crops rapidly in damp weather.",
+      "hi": "गीले मौसम में बहुत तेजी से फसल नष्ट करता है।",
+      "gu": "ભેજવાળા વાતાવરણમાં પાક ઝડપથી બગાડે છે."
+    },
+    "severity": "high",
+    "symptoms": {
+      "en": "Water-soaked lesions on leaf margins with white downy growth.",
+      "hi": "पत्तियों के किनारों पर काले गीले धब्बे।",
+      "gu": "પાનની કિનારી પર કાળા ભીના ડાઘ."
+    },
+    "treatment": {
+      "en": "Spray Metalaxyl 4% + Mancozeb 64% WP (2.5 g/L).",
+      "hi": "मेटालैक्सिल 4% + मैंकोजेब 64% WP का तत्काल छिड़काव करें।",
+      "gu": "મેટાલેક્સિલ ૪% + મેન્કોઝેબ ૬૪% WP છાંટો."
+    }
+  },
+  "Potato___healthy": {
+    "class_key": "Potato___healthy",
+    "audio": {
+      "en": "audio/en/potato_healthy.mp3",
+      "hi": "audio/hi/potato_healthy.mp3",
+      "gu": "audio/gu/potato_healthy.mp3"
+    },
+    "crop_id": 31,
+    "crop_name": "Potato",
+    "kind": "Healthy",
+    "name": {
+      "en": "Potato - Healthy",
+      "hi": "स्वस्थ आलू की पत्ती",
+      "gu": "તંદુરસ્ત બટાટાનું પાન"
+    },
+    "prevention": {
+      "en": "Maintain earthing up and timely irrigation.",
+      "hi": "समय पर मिट्टी चढ़ाएं और पानी दें।",
+      "gu": "સમયસર માટી ચડાવો અને પિયત આપો."
+    },
+    "recommended_technical_names": [],
+    "safety_note": {
+      "en": "Crop in great health.",
+      "hi": "फसल स्वस्थ है।",
+      "gu": "પાક તંદુરસ્ત છે."
+    },
+    "severity": "none",
+    "symptoms": {
+      "en": "Dense green foliage without lesions, rot, or curling.",
+      "hi": "पत्तियां घनी, हरी और धब्बा रहित हैं।",
+      "gu": "પાન ઘટાદાર અને ડાઘ વગરનાં છે."
+    },
+    "treatment": {
+      "en": "No pesticide required.",
+      "hi": "दवा की आवश्यकता नहीं है।",
+      "gu": "કોઈ દવાની જરૂર નથી."
+    }
+  },
+  "Corn_(maize)___Cercospora_leaf_spot_Gray_leaf_spot": {
+    "class_key": "Corn_(maize)___Cercospora_leaf_spot_Gray_leaf_spot",
+    "audio": {
+      "en": "audio/en/corn_gray_leaf_spot.mp3",
+      "hi": "audio/hi/corn_gray_leaf_spot.mp3",
+      "gu": "audio/gu/corn_gray_leaf_spot.mp3"
+    },
+    "crop_id": 3,
+    "crop_name": "Maize",
+    "kind": "Disease",
+    "name": {
+      "en": "Gray Leaf Spot (Maize)",
+      "hi": "मक्के का धूसर पत्ती धब्बा",
+      "gu": "મકાઈનો ગ્રે પાન ટપકાં રોગ"
+    },
+    "prevention": {
+      "en": "Rotate crops, plant tolerant hybrids.",
+      "hi": "फसल चक्र अपनाएं, सहिष्णु बीज लगाएं।",
+      "gu": "પાકની ફેરબદલી કરો."
+    },
+    "recommended_technical_names": [
+      "Mancozeb 75% WP"
+    ],
+    "safety_note": {
+      "en": "Protect the ear leaf for optimal yield.",
+      "hi": "भुट्टे के पास वाली पत्ती को बचाएं।",
+      "gu": "ડોડા પાસેના પાનને બચાવો."
+    },
+    "severity": "medium",
+    "symptoms": {
+      "en": "Rectangular gray spots bounded by leaf veins.",
+      "hi": "नसों के बीच लंबे आयताकार धूसर धब्बे।",
+      "gu": "પાનની નસો વચ્ચે લંબચોરસ રાખોડી પટ્ટા."
+    },
+    "treatment": {
+      "en": "Spray Mancozeb 75% WP (2 g/L).",
+      "hi": "मैंकोजेब 75% WP का छिड़काव करें।",
+      "gu": "મેન્કોઝેબ ૭૫% WP નો છંટકાવ કરો."
+    }
+  },
+  "Corn_(maize)___Common_rust": {
+    "class_key": "Corn_(maize)___Common_rust",
+    "audio": {
+      "en": "audio/en/corn_common_rust.mp3",
+      "hi": "audio/hi/corn_common_rust.mp3",
+      "gu": "audio/gu/corn_common_rust.mp3"
+    },
+    "crop_id": 3,
+    "crop_name": "Maize",
+    "kind": "Disease",
+    "name": {
+      "en": "Common Rust (Maize)",
+      "hi": "मक्के का सामान्य गेरुआ (रस्ट)",
+      "gu": "મકાઈનો ગેરુ રોગ (રસ્ટ)"
+    },
+    "prevention": {
+      "en": "Plant resistant hybrids, sow early.",
+      "hi": "रोगरोधी बीज चुनें, समय पर बुवाई करें।",
+      "gu": "રોગપ્રતિકારક બિયારણ વાવો."
+    },
+    "recommended_technical_names": [
+      "Mancozeb 75% WP"
+    ],
+    "safety_note": {
+      "en": "Rust spores travel on wind currents.",
+      "hi": "रस्ट के बीजाणु हवा से दूर तक फैलते हैं।",
+      "gu": "ગેરુના કણો પવન દ્વારા ફેલાય છે."
+    },
+    "severity": "medium",
+    "symptoms": {
+      "en": "Golden-brown powdery pustules on both leaf surfaces.",
+      "hi": "पत्तियों पर सुनहरे भूरे पाउडर जैसे फफोले।",
+      "gu": "પાન પર સોનેરી કથ્થઈ પાવડર જેવી ફોલ્લીઓ."
+    },
+    "treatment": {
+      "en": "Spray Mancozeb 75% WP (2 g/L).",
+      "hi": "मैंकोजेब 75% WP का छिड़काव करें।",
+      "gu": "મેન્કોઝેબ ૭૫% WP છાંટો."
+    }
+  },
+  "Corn_(maize)___Northern_Leaf_Blight": {
+    "class_key": "Corn_(maize)___Northern_Leaf_Blight",
+    "audio": {
+      "en": "audio/en/corn_northern_blight.mp3",
+      "hi": "audio/hi/corn_northern_blight.mp3",
+      "gu": "audio/gu/corn_northern_blight.mp3"
+    },
+    "crop_id": 3,
+    "crop_name": "Maize",
+    "kind": "Disease",
+    "name": {
+      "en": "Northern Leaf Blight",
+      "hi": "उत्तरी पत्ती झुलसा (मक्का)",
+      "gu": "નોર્ધન લીફ બ્લાઇટ (મકાઈ)"
+    },
+    "prevention": {
+      "en": "Bury crop residues after harvest, rotate crops.",
+      "hi": "अवशेषों को मिट्टी में दबाएं, फसल चक्र अपनाएं।",
+      "gu": "અવશેષો જમીનમાં દાટો."
+    },
+    "recommended_technical_names": [
+      "Mancozeb 75% WP"
+    ],
+    "safety_note": {
+      "en": "Severe blight before pollination cuts yield by 50%.",
+      "hi": "परागण से पहले भारी संक्रमण भारी नुकसान करता है।",
+      "gu": "પરાગનયન પહેલાં રોગ લાગવાથી મોટું નુકસાન થાય છે."
+    },
+    "severity": "high",
+    "symptoms": {
+      "en": "Long cigar-shaped grayish-green lesions on leaves.",
+      "hi": "पत्तियों पर सिगार के आकार के बड़े धब्बे।",
+      "gu": "પાન પર સિગાર આકારના લાંબા ડાઘ."
+    },
+    "treatment": {
+      "en": "Spray Mancozeb 75% WP (2 g/L).",
+      "hi": "मैंकोजेब 75% WP का छिड़काव करें।",
+      "gu": "મેન્કોઝેબ ૭૫% WP છાંટો."
+    }
+  },
+  "Corn_(maize)___healthy": {
+    "class_key": "Corn_(maize)___healthy",
+    "audio": {
+      "en": "audio/en/corn_healthy.mp3",
+      "hi": "audio/hi/corn_healthy.mp3",
+      "gu": "audio/gu/corn_healthy.mp3"
+    },
+    "crop_id": 3,
+    "crop_name": "Maize",
+    "kind": "Healthy",
+    "name": {
+      "en": "Maize - Healthy",
+      "hi": "स्वस्थ मक्के की पत्ती",
+      "gu": "તંદુરસ્ત મકાઈનું પાન"
+    },
+    "prevention": {
+      "en": "Ensure balanced nutrition and timely weeding.",
+      "hi": "संतुलित खाद और निराई करें।",
+      "gu": "યોગ્ય ખાતર અને નિંદામણ કરો."
+    },
+    "recommended_technical_names": [],
+    "safety_note": {
+      "en": "Crop in excellent health.",
+      "hi": "फसल उत्तम स्थिति में है।",
+      "gu": "પાક તંદુરસ્ત છે."
+    },
+    "severity": "none",
+    "symptoms": {
+      "en": "Broad arching deep green leaves with no lesions.",
+      "hi": "गहरे हरे रंग की चौड़ी स्वस्थ पत्तियां।",
+      "gu": "ઘેરા લીલા રંગના પહોળા પાન."
+    },
+    "treatment": {
+      "en": "No pesticide required.",
+      "hi": "दवा की आवश्यकता नहीं है।",
+      "gu": "કોઈ દવાની જરૂર નથી."
+    }
+  },
+  "Unknown___not_a_leaf": {
+    "class_key": "Unknown___not_a_leaf",
+    "audio": {
+      "en": "audio/en/unknown_leaf.mp3",
+      "hi": "audio/hi/unknown_leaf.mp3",
+      "gu": "audio/gu/unknown_leaf.mp3"
+    },
+    "crop_id": 0,
+    "crop_name": "Unknown",
+    "kind": "Other",
+    "name": {
+      "en": "Not a Crop Leaf / Unclear Image",
+      "hi": "फसल की पत्ती नहीं पहचानी गई",
+      "gu": "પાકની પત્તી ઓળખાઈ નથી / અસ્પષ્ટ ફોટો"
+    },
+    "prevention": {
+      "en": "Take photo in daylight covering the leaf center.",
+      "hi": "उजाले में पत्ती का साफ फोटो लें।",
+      "gu": "અજવાળામાં સ્પષ્ટ ફોટો લો."
+    },
+    "recommended_technical_names": [],
+    "safety_note": {
+      "en": "AgriScan supports Tomato, Potato, and Maize crops.",
+      "hi": "एग्रीस्कैन टमाटर, आलू और मक्का का समर्थन करता है।",
+      "gu": "એગ્રીસ્કેન ટામેટાં, બટાટા અને મકાઈને સપોર્ટ કરે છે."
+    },
+    "severity": "none",
+    "symptoms": {
+      "en": "Image does not appear to be a supported crop leaf.",
+      "hi": "फोटो में समर्थित पत्ती स्पष्ट नहीं है।",
+      "gu": "ફોટામાં પાન સ્પષ્ટ દેખાતું નથી."
+    },
+    "treatment": {
+      "en": "Please retake the photo in good lighting.",
+      "hi": "कृपया अच्छी रोशनी में दोबारा फोटो लें।",
+      "gu": "કૃપા કરીને ફરીથી ફોટો લો."
+    }
+  },
+  "Tomato___Bacterial_spot": {
+    "class_key": "Tomato___Bacterial_spot",
+    "audio": {
+      "en": "audio/en/tomato_bacterial_spot.mp3",
+      "hi": "audio/hi/tomato_bacterial_spot.mp3",
+      "gu": "audio/gu/tomato_bacterial_spot.mp3"
+    },
+    "crop_id": 30,
+    "crop_name": "Tomato",
+    "kind": "Disease",
+    "name": {
+      "en": "Bacterial Spot",
+      "hi": "जीवाणु पत्ती धब्बा रोग (टमाटर)",
+      "gu": "જીવાણુ પાન ટપકાં રોગ (ટામેટા)"
+    },
+    "prevention": {
+      "en": "Use hot water treated seeds. Avoid overhead irrigation.",
+      "hi": "गर्म पानी से उपचारित बीज बोएं। पत्तियों पर पानी न छिड़कें।",
+      "gu": "ગરમ પાણીથી માવજત કરેલ બિયારણ વાવો. પાન ભીના ન રહે તેનું ધ્યાન રાખો."
+    },
+    "recommended_technical_names": [
+      "Copper Oxychloride 50% WP"
+    ],
+    "safety_note": {
+      "en": "Bacterial spot spreads rapidly through wind-driven rains.",
+      "hi": "हवा और बारिश के छींटों से यह जीवाणु तेजी से फैलता है।",
+      "gu": "પવન અને વરસાદના છાંટાથી ઝડપથી ફેલાય છે."
+    },
+    "severity": "medium",
+    "symptoms": {
+      "en": "Small dark water-soaked circular spots with yellow halos on leaves, rough raised spots on fruit.",
+      "hi": "पत्तियों और तनों पर पीले घेरे वाले छोटे गहरे पानी जैसे गोल धब्बे।",
+      "gu": "પાન અને ડાળી પર પીળી કિનારીવાળા નાના કાળા ડાઘ."
+    },
+    "treatment": {
+      "en": "Spray Copper Oxychloride 50% WP (2.5 g/L) + Streptocycline upon first symptom.",
+      "hi": "कॉपर ऑक्सीक्लोराइड 50% WP (2.5 ग्राम/लीटर) और स्ट्रेप्टोसाइक्लिन का छिड़काव करें।",
+      "gu": "કોપર ઓક્સીક્લોરાઇડ ૫૦% WP સાથે સ્ટ્રેપ્ટોસાયક્લિન છાંટો."
+    }
+  }
+}

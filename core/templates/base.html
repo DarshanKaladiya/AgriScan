@@ -491,11 +491,11 @@
             <a href="{% url 'dashboard' %}" class="{% if request.path == '/' %}active{% endif %}">
                 <i data-lucide="layout-dashboard" style="width: 17px;"></i> Overview
             </a>
+            <a href="{% url 'my_scans' %}" class="{% if '/my-scans' in request.path or '/scanner' in request.path %}active{% endif %}">
+                <i data-lucide="scan-line" style="width: 17px;"></i> My Scans
+            </a>
             <a href="{% url 'crops_list' %}" class="{% if '/crop' in request.path %}active{% endif %}">
                 <i data-lucide="book-open" style="width: 17px;"></i> Crop Guide
-            </a>
-            <a href="{% url 'my_scans' %}" class="{% if '/my-scans' in request.path %}active{% endif %}">
-                <i data-lucide="scan-line" style="width: 17px;"></i> My Scans
             </a>
             <a href="{% url 'field_reports' %}" class="{% if '/field-reports' in request.path %}active{% endif %}">
                 <i data-lucide="radar" style="width: 17px;"></i> Field Reports

@@ -329,3 +329,7 @@ def field_reports(request):
         'stats': stats,
         'user': request.session.get("user")
     })
+
+def scanner_view(request):
+    """Redirects to personal scanner hub with login protection."""
+    return redirect("my_scans")
